@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="110dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.447"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/linear1">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/hospital_icon"
+            app:layout_constraintRight_toLeftOf="@id/hospital_name" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="佛山市第一人民医院掌上医院"
+            android:id="@+id/hospital_name"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="登录"
+        android:id="@+id/sign_in"
+        app:layout_constraintTop_toBottomOf="@id/linear1"
+        android:textSize="40sp"
+        android:textColor="@color/green"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="50dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sign_in"
+        android:id="@+id/linear2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="手机号"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="  请输入手机号"
+            android:textSize="20sp"
+            android:textCursorDrawable="@drawable/cursor_color" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="40dp"
+        android:id="@+id/linear3"
+        app:layout_constraintTop_toBottomOf="@id/linear2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="密码"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="  请输入密码"
+            android:textSize="20sp"
+            android:textCursorDrawable="@drawable/cursor_color"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/login"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:text="登录"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/green"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linear3" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/register_account"
+        app:layout_constraintTop_toBottomOf="@id/login"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:text="注册账号"
+        android:textSize="15sp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/reset_password"
+        app:layout_constraintTop_toBottomOf="@id/login"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="30dp"
+        android:text="重置密码"
+        android:textSize="15sp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,141 @@
+package com.example.hospital.Activity;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.hospital.Account.AccountManager;
+import com.example.hospital.Constant.HosptialConstant;
+import com.example.hospital.R;
+import com.example.hospital.Utils.SecurityCodeUtils;
+
+import org.json.JSONObject;
+
+import cn.smssdk.EventHandler;
+import cn.smssdk.SMSSDK;
+
+/**
+ * 注册
+ */
+public class SignUpActivity extends AppCompatActivity {
+    private long lastTime = 0;
+    private EditText editTextNumber, editTextSecurityCode, editTextPassword;
+    private EventHandler eh = new EventHandler(){
+        @Override
+        public void afterEvent(int event, int result, Object data) {
+            // TODO 此处不可直接处理UI线程，处理后续操作需传到主线程中操作
+            Message msg = new Message();
+            msg.arg1 = event;
+            msg.arg2 = result;
+            msg.obj = data;
+            handler.sendMessage(msg);
+        }
+    };
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            int event = msg.arg1;//3
+            int result = msg.arg2;//0
+            Object data = msg.obj;
+            if (result == SMSSDK.RESULT_COMPLETE) {
+                //回调完成
+                if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
+                    //验证码验证成功
+                    boolean r = AccountManager.getInstance().registerAccount(editTextNumber.getText().toString(), editTextPassword.getText().toString());
+                    if (r) {
+                        Toast.makeText(SignUpActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                        SignUpActivity.this.finish();
+                    } else {
+                        Toast.makeText(SignUpActivity.this, "注册失败，账号已存在", Toast.LENGTH_SHORT).show();
+                    }
+                }else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){
+                    //发送验证码成功
+                    Toast.makeText(SignUpActivity.this, "验证码发送成功", Toast.LENGTH_SHORT).show();
+                }else if (event ==SMSSDK.RESULT_ERROR){
+                    try {
+                        Throwable throwable = (Throwable) data;
+                        throwable.printStackTrace();
+                        JSONObject object = new JSONObject(throwable.getMessage());
+                        String des = object.optString("detail");//错误描述
+                        int status = object.optInt("status");//错误代码
+                        if (status > 0 && !TextUtils.isEmpty(des)) {
+                            Toast.makeText(SignUpActivity.this, des, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    } catch (Exception e) {
+                        //do something
+                    }
+                }
+            }else{
+                //验证码错误
+                Toast.makeText(SignUpActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
+                ((Throwable)data).printStackTrace();
+            }
+        }
+    };
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        SecurityCodeUtils.unregisterEventHandler(eh);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        SecurityCodeUtils.registerEventHandler(eh);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.sign_up_layout);
+        getSupportActionBar().hide();
+        editTextNumber = findViewById(R.id.phone_number);
+        editTextSecurityCode = findViewById(R.id.security_code);
+        editTextPassword = findViewById(R.id.password);
+        ImageView imageView = findViewById(R.id.back);
+        imageView.setOnClickListener(v -> finish());
+        Button buttonGetSecurityCode = findViewById(R.id.get_security_code);
+        buttonGetSecurityCode.setOnClickListener(v -> {
+
+            if (editTextNumber.getText().toString().equals("")) {
+                Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            long nowTime = System.currentTimeMillis();
+            if (lastTime + HosptialConstant.SECURITY_CODE_INTERVAL > nowTime && SecurityCodeUtils.securityCode.equals("")) {
+                Toast.makeText(this, "验证码已发送", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            lastTime = nowTime;
+            SecurityCodeUtils.sendSecurityCode(HosptialConstant.COUNTRY, editTextNumber.getText().toString());
+        });
+        Button buttonRegister = findViewById(R.id.register);
+        buttonRegister.setOnClickListener(v -> {
+            if ("".equals(editTextNumber.getText().toString())) {
+                Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if ("".equals(editTextPassword.getText().toString())) {
+                Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (editTextPassword.getText().toString().length() < HosptialConstant.MIN_PASSWORD_LENGTH) {
+                Toast.makeText(this, "密码长度至少8位", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            SecurityCodeUtils.checkSecurityCode(HosptialConstant.COUNTRY, editTextNumber.getText().toString(), editTextSecurityCode.getText().toString());
+        });
+    }
+}

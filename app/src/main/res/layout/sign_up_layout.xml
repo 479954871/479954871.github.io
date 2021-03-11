@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_arrow_back_24"
+        android:id="@+id/back"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="注册账户"
+        android:id="@+id/sign_in"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="40sp"
+        android:textColor="@color/green"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="100dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sign_in"
+        android:id="@+id/linear2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="手机号"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="  请输入手机号"
+            android:textSize="20sp"
+            android:textCursorDrawable="@drawable/cursor_color" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="50dp"
+        android:id="@+id/linear3"
+        app:layout_constraintTop_toBottomOf="@id/linear2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="密码"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="  至少8位"
+            android:textSize="20sp"
+            android:textCursorDrawable="@drawable/cursor_color"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linear3"
+        android:id="@+id/linear4">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="验证码"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/security_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="  请输入验证码"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:textCursorDrawable="@drawable/cursor_color" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取验证码"
+            android:layout_marginLeft="10dp"
+            app:backgroundTint="@color/green"
+            android:id="@+id/get_security_code"/>
+    </LinearLayout>
+    <Button
+        android:id="@+id/register"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:text="注册"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/green"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linear4" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
