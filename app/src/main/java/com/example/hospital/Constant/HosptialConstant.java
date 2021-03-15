@@ -15,4 +15,12 @@ public class HosptialConstant {
     public static final int MIN_PASSWORD_LENGTH = 8;
 
     public static final String COUNTRY = "86";
+
+    public static final String WEBSITE = "http://192.168.0.105:8000/hospital/";
+
+    public static final String WEBSITE_LOGIN = "login/";
+
+    public static final String WEBSITE_SIGN_UP = "signup/";
+
+    public static final String WEBSITE_RESET = "reset/";
 }

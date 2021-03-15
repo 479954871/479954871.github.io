@@ -9,12 +9,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.hospital.Activity.SignInActivity;
-import com.example.hospital.Activity.YiYuanJieShaoActivity;
 import com.example.hospital.R;
 
 public class MineFragment extends Fragment {
@@ -26,15 +26,16 @@ public class MineFragment extends Fragment {
         mineViewModel =
                 new ViewModelProvider(this).get(MineViewModel.class);
         View root = inflater.inflate(R.layout.fragment_mine, container, false);
-        final TextView textView = root.findViewById(R.id.text_notifications);
         mineViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                textView.setText(s);
             }
         });
-
-        textView.setOnClickListener(v -> {
+        TextView textView1 = root.findViewById(R.id.main_head_title);
+        textView1.setText("我的");
+        ConstraintLayout constraintLayout = root.findViewById(R.id.my_account);
+        constraintLayout.setOnClickListener(v -> {
+            //TODO 一开始直接进登录页面，一定要登录才能使用app
             Intent intent = new Intent(getActivity(), SignInActivity.class);
             startActivity(intent);
         });

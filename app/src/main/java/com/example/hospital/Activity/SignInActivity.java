@@ -2,18 +2,27 @@ package com.example.hospital.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hospital.Account.AccountManager;
 import com.example.hospital.Constant.HosptialConstant;
+import com.example.hospital.Correspondence.HospitalServer;
 import com.example.hospital.R;
 import com.example.hospital.Utils.SecurityCodeUtils;
+
+import org.json.JSONObject;
+
+import cn.smssdk.SMSSDK;
 
 /**
  * 登录
@@ -52,13 +61,56 @@ public class SignInActivity extends AppCompatActivity {
                 Toast.makeText(this, "密码长度至少8位", Toast.LENGTH_SHORT).show();
                 return;
             }
-            boolean result = AccountManager.getInstance().checkAccount(editTextNumber.getText().toString(), editTextPassword.getText().toString());
-            if (result) {
-                Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(this, "登录失败，手机号或密码错误", Toast.LENGTH_SHORT).show();
-            }
+            HospitalServer.sendLoginRequest(editTextNumber.getText().toString(), editTextPassword.getText().toString(), new HospitalServer.LoginCallback() {
+                @Override
+                public void loginSuccess() {
+                    Message msg = new Message();
+                    msg.what = 0;
+                    msg.obj = editTextNumber.getText().toString();
+                    handler.sendMessage(msg);
+                }
+                @Override
+                public void loginFailed() {
+                    Message msg = new Message();
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                }
+                @Override
+                public void userNotExists() {
+                    Message msg = new Message();
+                    msg.what = 2;
+                    handler.sendMessage(msg);
+                }
+
+                @Override
+                public void networkUnavailable() {
+                    Message msg = new Message();
+                    msg.what = 3;
+                    handler.sendMessage(msg);
+                }
+            });
         });
     }
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:
+                    Toast.makeText(SignInActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                    AccountManager.getInstance().setNowAccount((String)msg.obj);
+                    finish();
+                    break;
+                case 1:
+                    Toast.makeText(SignInActivity.this, "登录失败，手机号或密码错误", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    Toast.makeText(SignInActivity.this, "账户不存在，请注册账户", Toast.LENGTH_SHORT).show();
+                    break;
+                case 3:
+                    Toast.makeText(SignInActivity.this, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 }

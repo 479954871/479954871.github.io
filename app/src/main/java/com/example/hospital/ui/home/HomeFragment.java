@@ -48,13 +48,14 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        final TextView textView = root.findViewById(R.id.text_home);
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                textView.setText(s);
             }
         });
+
+        TextView textView1 = root.findViewById(R.id.main_head_title);
+        textView1.setText("首页");
 
         viewPager = ((ViewPager) root.findViewById(R.id.viewPager));
         indicators[0] = ((ImageView) root.findViewById(R.id.image_1));

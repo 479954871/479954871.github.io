@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hospital.Account.AccountManager;
 import com.example.hospital.Constant.HosptialConstant;
+import com.example.hospital.Correspondence.HospitalServer;
 import com.example.hospital.R;
 import com.example.hospital.Utils.SecurityCodeUtils;
 
@@ -34,6 +35,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         public void afterEvent(int event, int result, Object data) {
             // TODO 此处不可直接处理UI线程，处理后续操作需传到主线程中操作
             Message msg = new Message();
+            msg.what = -1;
             msg.arg1 = event;
             msg.arg2 = result;
             msg.obj = data;
@@ -44,43 +46,71 @@ public class ResetPasswordActivity extends AppCompatActivity {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            int event = msg.arg1;//3
-            int result = msg.arg2;//0
-            Object data = msg.obj;
-            if (result == SMSSDK.RESULT_COMPLETE) {
-                //回调完成
-                if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
-                    //验证码验证成功
-                    boolean r = AccountManager.getInstance().resetPassword(editTextNumber.getText().toString(), editTextPassword.getText().toString());
-                    if (r) {
-                        Toast.makeText(ResetPasswordActivity.this, "密码重设成功", Toast.LENGTH_SHORT).show();
-                        ResetPasswordActivity.this.finish();
-                    } else {
-                        Toast.makeText(ResetPasswordActivity.this, "重设失败，账号不存在", Toast.LENGTH_SHORT).show();
-                    }
-                }else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){
-                    //发送验证码成功
-                    Toast.makeText(ResetPasswordActivity.this, "验证码发送成功", Toast.LENGTH_SHORT).show();
-                }else if (event ==SMSSDK.RESULT_ERROR){
-                    try {
-                        Throwable throwable = (Throwable) data;
-                        throwable.printStackTrace();
-                        JSONObject object = new JSONObject(throwable.getMessage());
-                        String des = object.optString("detail");//错误描述
-                        int status = object.optInt("status");//错误代码
-                        if (status > 0 && !TextUtils.isEmpty(des)) {
-                            Toast.makeText(ResetPasswordActivity.this, des, Toast.LENGTH_SHORT).show();
-                            return;
+            switch (msg.what) {
+                case -1:
+                    int event = msg.arg1;//3
+                    int result = msg.arg2;//0
+                    Object data = msg.obj;
+                    if (result == SMSSDK.RESULT_COMPLETE) {
+                        //回调完成
+                        if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
+                            //验证码验证成功
+                            HospitalServer.sendResetPasswordRequest(editTextNumber.getText().toString(), editTextPassword.getText().toString(), new HospitalServer.ResetPasswordCallback() {
+                                @Override
+                                public void resetSuccess() {
+                                    Message msg = new Message();
+                                    msg.what = 0;
+                                    handler.sendMessage(msg);
+                                }
+                                @Override
+                                public void userNotExists() {
+                                    Message msg = new Message();
+                                    msg.what = 1;
+                                    handler.sendMessage(msg);
+                                }
+                                @Override
+                                public void networkUnavailable() {
+                                    Message msg = new Message();
+                                    msg.what = 2;
+                                    handler.sendMessage(msg);
+                                }
+                            });
+                        }else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){
+                            //发送验证码成功
+                            Toast.makeText(ResetPasswordActivity.this, "验证码发送成功", Toast.LENGTH_SHORT).show();
+                        }else if (event ==SMSSDK.RESULT_ERROR){
+                            try {
+                                Throwable throwable = (Throwable) data;
+                                throwable.printStackTrace();
+                                JSONObject object = new JSONObject(throwable.getMessage());
+                                String des = object.optString("detail");//错误描述
+                                int status = object.optInt("status");//错误代码
+                                if (status > 0 && !TextUtils.isEmpty(des)) {
+                                    Toast.makeText(ResetPasswordActivity.this, des, Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            } catch (Exception e) {
+                                //do something
+                            }
                         }
-                    } catch (Exception e) {
-                        //do something
+                    }else{
+                        //验证码错误
+                        Toast.makeText(ResetPasswordActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
+                        ((Throwable)data).printStackTrace();
                     }
-                }
-            }else{
-                //验证码错误
-                Toast.makeText(ResetPasswordActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
-                ((Throwable)data).printStackTrace();
+                    break;
+                case 0:
+                    Toast.makeText(ResetPasswordActivity.this, "密码重设成功", Toast.LENGTH_SHORT).show();
+                    finish();
+                    break;
+                case 1:
+                    Toast.makeText(ResetPasswordActivity.this, "重设失败，账号不存在", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    Toast.makeText(ResetPasswordActivity.this, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
+                    break;
             }
+
         }
     };
     @Override
@@ -110,10 +140,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
             String phoneNum = editTextNumber.getText().toString();
             if ("".equals(phoneNum)) {
                 Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (!AccountManager.getInstance().hasAccount(phoneNum)) {
-                Toast.makeText(this, "该手机号尚未注册", Toast.LENGTH_SHORT).show();
                 return;
             }
             long nowTime = System.currentTimeMillis();

@@ -30,6 +30,8 @@ public class MessageFragment extends Fragment {
                 textView.setText(s);
             }
         });
+        TextView textView1 = root.findViewById(R.id.main_head_title);
+        textView1.setText("消息");
         return root;
     }
 }
