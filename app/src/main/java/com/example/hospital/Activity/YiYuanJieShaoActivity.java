@@ -8,6 +8,7 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -24,6 +25,8 @@ public class YiYuanJieShaoActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.yi_yuan_jie_shao_layout);
+        TextView textView = findViewById(R.id.main_head_title);
+        textView.setText("医院介绍");
         WebView webView = findViewById(R.id.webview);
         webView.loadUrl("https://www.fsyyy.com/index.aspx");//https://www.fsyyy.com/index.aspx
         // 系统默认会通过手机浏览器打开网页，为了能够直接通过WebView显示网页，则必须设置

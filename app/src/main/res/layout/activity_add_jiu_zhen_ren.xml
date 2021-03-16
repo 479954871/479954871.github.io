@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.AddJiuZhenRenActivity">
+    <include
+        android:id="@+id/action_bar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/new_activity_action_bar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/action_bar2"
+        android:id="@+id/linear2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="姓名"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="  请输入姓名"
+            android:textSize="20sp"
+            android:textCursorDrawable="@drawable/cursor_color" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linear2"
+        android:id="@+id/linear3">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="性别"
+        android:layout_marginRight="10dp"
+        android:textSize="20sp"/>
+
+    <EditText
+        android:id="@+id/sex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="  请输入姓名"
+        android:textSize="20sp"
+        android:textCursorDrawable="@drawable/cursor_color" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="40dp"
+        android:id="@+id/linear4"
+        app:layout_constraintTop_toBottomOf="@id/linear3">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="年龄"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="  请输入年龄"
+            android:textSize="20sp"
+            android:textCursorDrawable="@drawable/cursor_color"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="40dp"
+        android:id="@+id/linear5"
+        app:layout_constraintTop_toBottomOf="@id/linear4">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="地址"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/patient_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="  选填"
+            android:textSize="20sp"
+            android:textCursorDrawable="@drawable/cursor_color"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="40dp"
+        android:id="@+id/linear6"
+        app:layout_constraintTop_toBottomOf="@id/linear5">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="微信号"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/patient_wechat_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="  选填"
+            android:textSize="20sp"
+            android:textCursorDrawable="@drawable/cursor_color"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="40dp"
+        android:id="@+id/linear7"
+        app:layout_constraintTop_toBottomOf="@id/linear6">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="邮箱"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/patient_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="  选填"
+            android:textSize="20sp"
+            android:textCursorDrawable="@drawable/cursor_color"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_add"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:text="添加"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/green"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linear7" />
+</androidx.constraintlayout.widget.ConstraintLayout>

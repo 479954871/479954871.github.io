@@ -12,6 +12,7 @@
     <color name="red">#FF0000</color>
     <color name="gold">#FFD700</color>
     <color name="yellow">#FFFF00</color>
+    <color name="light_green">#ffe3ffc6</color>
     <color name="green">#00B000</color>
     <color name="blue">#0000FF</color>
     <color name="purple">#800080</color>

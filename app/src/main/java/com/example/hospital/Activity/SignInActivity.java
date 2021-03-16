@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,11 +17,6 @@ import com.example.hospital.Account.AccountManager;
 import com.example.hospital.Constant.HosptialConstant;
 import com.example.hospital.Correspondence.HospitalServer;
 import com.example.hospital.R;
-import com.example.hospital.Utils.SecurityCodeUtils;
-
-import org.json.JSONObject;
-
-import cn.smssdk.SMSSDK;
 
 /**
  * 登录
@@ -33,7 +27,7 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sign_in_layout);
+        setContentView(R.layout.activity_sign_in_layout);
         getSupportActionBar().hide();
         editTextNumber = findViewById(R.id.phone_number);
         editTextPassword = findViewById(R.id.password);
@@ -66,7 +60,6 @@ public class SignInActivity extends AppCompatActivity {
                 public void loginSuccess() {
                     Message msg = new Message();
                     msg.what = 0;
-                    msg.obj = editTextNumber.getText().toString();
                     handler.sendMessage(msg);
                 }
                 @Override
@@ -98,7 +91,6 @@ public class SignInActivity extends AppCompatActivity {
             switch (msg.what) {
                 case 0:
                     Toast.makeText(SignInActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                    AccountManager.getInstance().setNowAccount((String)msg.obj);
                     finish();
                     break;
                 case 1:

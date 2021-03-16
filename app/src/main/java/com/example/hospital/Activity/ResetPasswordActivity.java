@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hospital.Account.AccountManager;
 import com.example.hospital.Constant.HosptialConstant;
 import com.example.hospital.Correspondence.HospitalServer;
 import com.example.hospital.R;
@@ -128,7 +127,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.reset_password_layout);
+        setContentView(R.layout.activity_reset_password_layout);
         getSupportActionBar().hide();
         editTextNumber = findViewById(R.id.phone_number);
         editTextSecurityCode = findViewById(R.id.security_code);

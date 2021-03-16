@@ -5,9 +5,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.example.hospital.Account.AccountManager;
 import com.example.hospital.Activity.ResetPasswordActivity;
 import com.example.hospital.Constant.HosptialConstant;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,6 +63,27 @@ public class HospitalServer {
                     String status = jsonObject.getString("status");
                     if (status.equals("登录成功") ){
                         callback.loginSuccess();
+                        JSONArray jsonArray = jsonObject.optJSONArray("jiuzhenren");
+                        if (jsonArray != null && jsonArray.length() > 0) {
+                            AccountManager.JiuZhenRen[] patients = new AccountManager.JiuZhenRen[jsonArray.length()];
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                // JSON数组里面的具体-JSON对象
+                                JSONObject json = jsonArray.getJSONObject(i);
+                                patients[i] = new AccountManager.JiuZhenRen();
+                                patients[i].patientId = json.optString("patient_id", "");
+                                patients[i].name = json.optString("name", "");
+                                patients[i].sex = json.optBoolean("sex", true);
+                                patients[i].age = json.optInt("age", 0);
+                                patients[i].phone = json.optString("phone", "");
+                                patients[i].address = json.optString("address", "");
+                                patients[i].wechatAccount = json.optString("wechat_account", "");
+                                patients[i].email = json.optString("email", "");
+                            }
+                            AccountManager.getInstance().setNowAccount(phone, patients);
+                        } else {
+                            AccountManager.getInstance().setNowAccount(phone, null);
+                        }
+
 
                     }else if(status.equals("登录失败") ){
                         callback.loginFailed();

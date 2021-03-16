@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.hospital.Activity.JiuZhenRenGuanLiActivity;
 import com.example.hospital.Activity.SignInActivity;
 import com.example.hospital.R;
 
@@ -37,6 +39,11 @@ public class MineFragment extends Fragment {
         constraintLayout.setOnClickListener(v -> {
             //TODO 一开始直接进登录页面，一定要登录才能使用app
             Intent intent = new Intent(getActivity(), SignInActivity.class);
+            startActivity(intent);
+        });
+        LinearLayout linearLayout = root.findViewById(R.id.linear);
+        linearLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), JiuZhenRenGuanLiActivity.class);
             startActivity(intent);
         });
         return root;
