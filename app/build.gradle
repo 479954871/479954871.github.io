@@ -14,7 +14,7 @@ MobSDK {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    buildToolsVersion "31.0.0-rc2"
 
     defaultConfig {
         applicationId "com.example.hospital"

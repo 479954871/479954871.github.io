@@ -1,4 +1,4 @@
-package com.example.hospital.Adapter;
+package com.example.hospital.adapter;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.example.hospital.Constant.HosptialConstant;
+import com.example.hospital.constant.HosptialConstant;
 import com.example.hospital.R;
 
 /**

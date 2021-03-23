@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.JiuZhenRenGuanLiActivity">
+    tools:context=".activity.JiuZhenRenGuanLiActivity">
     <include
         android:id="@+id/action_bar2"
         android:layout_width="match_parent"
@@ -32,6 +32,5 @@
         android:id="@+id/listview"
         app:layout_constraintTop_toBottomOf="@id/add_patient"
         android:layout_margin="30dp"
-        android:padding="10dp"
         android:background="@color/light_green"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.example.hospital.Activity;
+package com.example.hospital.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,9 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hospital.Account.AccountManager;
-import com.example.hospital.Constant.HosptialConstant;
-import com.example.hospital.Correspondence.HospitalServer;
+import com.example.hospital.constant.HosptialConstant;
+import com.example.hospital.server.HospitalServer;
 import com.example.hospital.R;
 
 /**

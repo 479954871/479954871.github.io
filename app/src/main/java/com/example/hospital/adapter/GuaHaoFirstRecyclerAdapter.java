@@ -1,4 +1,4 @@
-package com.example.hospital.Adapter;
+package com.example.hospital.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hospital.R;
 
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -72,7 +71,7 @@ public class GuaHaoFirstRecyclerAdapter extends RecyclerView.Adapter<GuaHaoFirst
             public void onClick(View v) {
                 if (position != nowPosition) {
                     textView.setTextColor(0xFF000000);
-                    constraintLayout.setBackgroundColor(0xFFDDDDDD);
+                    constraintLayout.setBackgroundColor(0xffe3ffc6);
                     nowPosition = position;
                     holder.title.setTextColor(0xFF03DAC5);
                     holder.constraintLayout.setBackgroundColor(0xFFFFFFFF);

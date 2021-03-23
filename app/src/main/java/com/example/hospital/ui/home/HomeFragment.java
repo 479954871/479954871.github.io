@@ -17,10 +17,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.hospital.Activity.MenZhenGuaHaoActivity;
-import com.example.hospital.Activity.YiYuanJieShaoActivity;
-import com.example.hospital.Adapter.BannerAdapter;
-import com.example.hospital.Constant.HosptialConstant;
+import com.example.hospital.activity.MenZhenGuaHaoActivity;
+import com.example.hospital.activity.YiYuanJieShaoActivity;
+import com.example.hospital.adapter.BannerAdapter;
+import com.example.hospital.constant.HosptialConstant;
 import com.example.hospital.R;
 
 import java.util.concurrent.Executors;

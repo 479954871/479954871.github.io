@@ -30,11 +30,10 @@
             android:layout_marginRight="10dp"
             android:textSize="20sp"/>
 
-        <EditText
+        <TextView
             android:id="@+id/patient_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="  请输入姓名"
             android:textSize="20sp"
             android:textCursorDrawable="@drawable/cursor_color" />
     </LinearLayout>
@@ -58,11 +57,10 @@
             android:layout_marginRight="10dp"
             android:textSize="20sp"/>
 
-        <EditText
+        <TextView
             android:id="@+id/patient_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="  请输入身份证"
             android:textSize="20sp"
             android:textCursorDrawable="@drawable/cursor_color" />
     </LinearLayout>
@@ -210,18 +208,33 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btn_add"
+        android:id="@+id/btn_save"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="40dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:text="添加"
+        android:text="保存"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:backgroundTint="@color/green"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/linear8" />
+    <Button
+        android:id="@+id/btn_delete"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:text="删除"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/red"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_save" />
 </androidx.constraintlayout.widget.ConstraintLayout>

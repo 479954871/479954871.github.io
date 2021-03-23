@@ -1,4 +1,4 @@
-package com.example.hospital.Activity;
+package com.example.hospital.activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.example.hospital.Account.AccountManager;
+import com.example.hospital.account.AccountManager;
 import com.example.hospital.R;
 
 import java.util.ArrayList;
@@ -20,6 +20,21 @@ import java.util.List;
 import java.util.Map;
 
 public class JiuZhenRenGuanLiActivity extends AppCompatActivity {
+    SimpleAdapter adapter;
+    List<Map<String, String>> list = new ArrayList<>();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        list.clear();
+        List<AccountManager.JiuZhenRen> patients = AccountManager.getInstance().getJiuZhenRen();
+        for (int i = 0; i < patients.size(); i++) {
+            Map<String, String> map = new HashMap<>();
+            map.put("patient_name", "姓名："+patients.get(i).name);
+            map.put("patient_id", "身份证："+patients.get(i).patientId);
+            list.add(map);
+        }
+        adapter.notifyDataSetChanged();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,19 +55,23 @@ public class JiuZhenRenGuanLiActivity extends AppCompatActivity {
         });
 
         ListView listViewPatients = (ListView) findViewById(R.id.listview);
-        List<Map<String, String>> list = new ArrayList<>();
         List<AccountManager.JiuZhenRen> patients = AccountManager.getInstance().getJiuZhenRen();
         for (int i = 0; i < patients.size(); i++) {
             Map<String, String> map = new HashMap<>();
-            map.put("patient_name", patients.get(i).name);
-            map.put("patient_id", patients.get(i).patientId);
+            map.put("patient_name", "姓名："+patients.get(i).name);
+            map.put("patient_id", "身份证："+patients.get(i).patientId);
             list.add(map);
         }
         // 定义SimpleAdapter适配器。
         // 使用SimpleAdapter来作为ListView的适配器，比ArrayAdapter能展现更复杂的布局效果。为了显示较为复杂的ListView的item效果，需要写一个xml布局文件，来设置ListView中每一个item的格式。
-        SimpleAdapter adapter = new SimpleAdapter(this, list, R.layout.patient_item,
+        adapter = new SimpleAdapter(this, list, R.layout.patient_item,
                 new String[] { "patient_name", "patient_id" }, new int[] {R.id.patient_name,
                 R.id.patient_id});
         listViewPatients.setAdapter(adapter);
+        listViewPatients.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = new Intent(JiuZhenRenGuanLiActivity.this, ModifyJiuZhenRenActivity.class);
+            intent.putExtra("position",position);
+            startActivity(intent);
+        });
     }
 }

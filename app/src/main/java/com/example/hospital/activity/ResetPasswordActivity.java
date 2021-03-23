@@ -1,4 +1,4 @@
-package com.example.hospital.Activity;
+package com.example.hospital.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,8 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hospital.Constant.HosptialConstant;
-import com.example.hospital.Correspondence.HospitalServer;
+import com.example.hospital.account.AccountManager;
+import com.example.hospital.constant.HosptialConstant;
+import com.example.hospital.server.HospitalServer;
 import com.example.hospital.R;
 import com.example.hospital.Utils.SecurityCodeUtils;
 
@@ -130,6 +131,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reset_password_layout);
         getSupportActionBar().hide();
         editTextNumber = findViewById(R.id.phone_number);
+        editTextNumber.setText(AccountManager.getInstance().getNowAccount());
         editTextSecurityCode = findViewById(R.id.security_code);
         editTextPassword = findViewById(R.id.password);
         ImageView imageView = findViewById(R.id.back);

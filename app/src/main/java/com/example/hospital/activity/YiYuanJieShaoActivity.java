@@ -1,4 +1,4 @@
-package com.example.hospital.Activity;
+package com.example.hospital.activity;
 
 
 import android.net.http.SslError;
