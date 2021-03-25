@@ -17,11 +17,13 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.hospital.R;
+import com.example.hospital.account.AccountManager;
 import com.example.hospital.activity.MenZhenGuaHaoActivity;
+import com.example.hospital.activity.SignInActivity;
 import com.example.hospital.activity.YiYuanJieShaoActivity;
 import com.example.hospital.adapter.BannerAdapter;
 import com.example.hospital.constant.HosptialConstant;
-import com.example.hospital.R;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -100,6 +102,10 @@ public class HomeFragment extends Fragment {
 
         ImageView imageView2 = root.findViewById(R.id.menzhenguahao);
         imageView2.setOnClickListener(v -> {
+            if (AccountManager.getInstance().getNowAccount().equals("")) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            }
             Intent intent = new Intent(getActivity(), MenZhenGuaHaoActivity.class);
             startActivity(intent);
         });

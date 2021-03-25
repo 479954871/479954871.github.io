@@ -25,7 +25,8 @@
         android:theme="@style/Theme.Hospital"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".activity.DoctorActivity"></activity>
+        <activity android:name=".activity.ConfirmGuaHaoActivity"></activity>
+        <activity android:name=".activity.DoctorActivity" />
         <activity android:name=".activity.MyAccountActivity" />
         <activity android:name=".activity.ModifyJiuZhenRenActivity" />
         <activity android:name=".activity.AddJiuZhenRenActivity" />

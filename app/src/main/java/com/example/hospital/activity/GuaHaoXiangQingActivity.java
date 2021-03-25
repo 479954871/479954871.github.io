@@ -57,7 +57,12 @@ public class GuaHaoXiangQingActivity extends AppCompatActivity {
     int keshiFirstId, keshiSecondId;
     ListView listView;
     SimpleAdapter mListViewAdapter;
+    int thatDay = getDayofWeek("");
     static Bitmap bitmap = null;
+    static String[] weeks = new String[7];
+    static String[] dates = new String[7];
+    static String[] months = new String[7];
+    static String[] years = new String[7];
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +108,11 @@ public class GuaHaoXiangQingActivity extends AppCompatActivity {
             intent.putExtra("doc_intro", (String)list.get(position).get("doc_intro"));
             intent.putExtra("doc_good_at", (String)list.get(position).get("doc_good_at"));
             intent.putExtra("doc_treat_time", (String)list.get(position).get("doc_treat_time"));
+            intent.putExtra("that_day", thatDay);
+            intent.putExtra("keshi_first", keshiFirst);
+            intent.putExtra("keshi_second", keshiSecond);
+            intent.putExtra("keshi_first_id", keshiFirstId);
+            intent.putExtra("keshi_second_id", keshiSecondId);
             startActivity(intent);
         });
 
@@ -114,10 +124,7 @@ public class GuaHaoXiangQingActivity extends AppCompatActivity {
         Log.w("TAG", "onCreate: " + mYear + mMonth + mDay);
         textView1 = findViewById(R.id.day);
         textView1.setText(mYear + "年" + mMonth + "月" + mDay + "日");
-        String[] weeks = new String[7];
-        String[] dates = new String[7];
-        String[] months = new String[7];
-        String[] years = new String[7];
+
         int now = getDayofWeek("");
         for (int i = 0; i < 7; i++) {
             weeks[i] = " 周"+week[(now + i) % 7]+" ";
@@ -146,7 +153,7 @@ public class GuaHaoXiangQingActivity extends AppCompatActivity {
             textView1.setText(years[position] + "年" + months[position] + "月" + dates[position] + "日");
             mHorizontalAdapter.setSelectedPosition(position);
             mHorizontalAdapter.notifyDataSetChanged();
-            int thatDay = (now + position) % 7;
+            thatDay = (now + position) % 7;
             list.clear();
             for (int i = 0; i < listDoctorInWeek.get(thatDay).size(); ++i) {
                 list.add(listAllDoctor.get(listDoctorInWeek.get(thatDay).get(i)));

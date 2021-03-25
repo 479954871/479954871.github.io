@@ -1,5 +1,6 @@
 package com.example.hospital.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,9 +46,11 @@ public class GuaHaoFirstRecyclerAdapter extends RecyclerView.Adapter<GuaHaoFirst
 
     private ConstraintLayout constraintLayout;
 
-    public GuaHaoFirstRecyclerAdapter(List<String> data) {
-        this.mDatas = data;
+    Context context;
 
+    public GuaHaoFirstRecyclerAdapter(Context context, List<String> data) {
+        this.mDatas = data;
+        this.context = context;
     }
 
     //回调方法 将接口传递进来
@@ -60,8 +63,9 @@ public class GuaHaoFirstRecyclerAdapter extends RecyclerView.Adapter<GuaHaoFirst
     public void onBindViewHolder(VH holder, int position) {
         holder.title.setText(mDatas.get(position));
         if (position == nowPosition) {
-            holder.title.setTextColor(0xFF03DAC5);
-            holder.constraintLayout.setBackgroundColor(0xFFFFFFFF);
+
+            holder.title.setTextColor(context.getResources().getColor(R.color.teal_200));
+            holder.constraintLayout.setBackgroundColor(context.getResources().getColor(R.color.white));
             textView = holder.title;
             constraintLayout = holder.constraintLayout;
         }
@@ -70,11 +74,11 @@ public class GuaHaoFirstRecyclerAdapter extends RecyclerView.Adapter<GuaHaoFirst
             @Override
             public void onClick(View v) {
                 if (position != nowPosition) {
-                    textView.setTextColor(0xFF000000);
-                    constraintLayout.setBackgroundColor(0xffe3ffc6);
+                    textView.setTextColor(context.getResources().getColor(R.color.black));
+                    constraintLayout.setBackgroundColor(context.getResources().getColor(R.color.light_green));
                     nowPosition = position;
-                    holder.title.setTextColor(0xFF03DAC5);
-                    holder.constraintLayout.setBackgroundColor(0xFFFFFFFF);
+                    holder.title.setTextColor(context.getResources().getColor(R.color.teal_200));
+                    holder.constraintLayout.setBackgroundColor(context.getResources().getColor(R.color.white));
                     textView = holder.title;
                     constraintLayout = holder.constraintLayout;
                 }

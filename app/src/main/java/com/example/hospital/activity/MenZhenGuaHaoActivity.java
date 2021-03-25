@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hospital.account.AccountManager;
 import com.example.hospital.adapter.GuaHaoFirstRecyclerAdapter;
 import com.example.hospital.adapter.GuaHaoSecondRecyclerAdapter;
 import com.example.hospital.R;
@@ -34,6 +35,16 @@ public class MenZhenGuaHaoActivity extends AppCompatActivity {
     private GuaHaoFirstRecyclerAdapter adapterFirst;
     private GuaHaoSecondRecyclerAdapter adapterSecond;
     int firstPosition = 0;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (AccountManager.getInstance().getNowAccount().equals("")) {
+            Intent intent = new Intent(this, SignInActivity.class);
+            startActivity(intent);
+        }
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +60,7 @@ public class MenZhenGuaHaoActivity extends AppCompatActivity {
         getKeshiList();
         recyclerViewFirst = findViewById(R.id.keshi_first);
         recyclerViewFirst.setLayoutManager(new LinearLayoutManager(this));
-        adapterFirst = new GuaHaoFirstRecyclerAdapter(keshiFirst);
+        adapterFirst = new GuaHaoFirstRecyclerAdapter(this, keshiFirst);
         adapterFirst.setOnItemClickListener(new GuaHaoFirstRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
