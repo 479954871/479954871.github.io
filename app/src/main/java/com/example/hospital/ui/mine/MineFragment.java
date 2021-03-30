@@ -16,6 +16,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.hospital.account.AccountManager;
+import com.example.hospital.activity.GuaHaoGuanLiActivity;
+import com.example.hospital.activity.JiaoFeiGuanLiActivity;
 import com.example.hospital.activity.JiuZhenRenGuanLiActivity;
 import com.example.hospital.activity.MyAccountActivity;
 import com.example.hospital.activity.SignInActivity;
@@ -65,10 +67,34 @@ public class MineFragment extends Fragment {
         });
         LinearLayout linearLayout = root.findViewById(R.id.linear);
         linearLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), JiuZhenRenGuanLiActivity.class);
-            startActivity(intent);
+            if (AccountManager.getInstance().getNowAccount().equals("")) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), JiuZhenRenGuanLiActivity.class);
+                startActivity(intent);
+            }
         });
-
+        LinearLayout linearLayout1 = root.findViewById(R.id.linear1);
+        linearLayout1.setOnClickListener(v -> {
+            if (AccountManager.getInstance().getNowAccount().equals("")) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), GuaHaoGuanLiActivity.class);
+                startActivity(intent);
+            }
+        });
+        LinearLayout linearLayout2 = root.findViewById(R.id.linear2);
+        linearLayout2.setOnClickListener(v -> {
+            if (AccountManager.getInstance().getNowAccount().equals("")) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), JiaoFeiGuanLiActivity.class);
+                startActivity(intent);
+            }
+        });
         return root;
     }
 }

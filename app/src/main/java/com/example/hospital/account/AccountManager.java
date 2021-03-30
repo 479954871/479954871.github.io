@@ -22,7 +22,21 @@ public class AccountManager {
         public String address;
         public String wechatAccount;
         public String email;
+        public List<GuaHao> guaHaos;
     };
+
+    public static class GuaHao {
+        public String docId;
+        public String docName;
+        public int firstDepId;
+        public String firstDep;
+        public int secondDepId;
+        public String secondDep;
+        public String createTime;
+        public String reserveDate;
+        public int reserveTime;
+        public double fee;
+    }
     private final List<JiuZhenRen> patients = new ArrayList<>();
 
     private AccountManager() {
@@ -98,6 +112,33 @@ public class AccountManager {
                 return;
             }
         }
+    }
+
+    public void addGuaHao(int position, String docId, String docName, int firstDepId,
+                          String firstDep, int secondDepId, String secondDep, String createTime,
+                          String reserveDate, int reserveTime, double fee) {
+        if (position >= patients.size()) return;
+        if (patients.get(position).guaHaos == null) {
+            patients.get(position).guaHaos = new ArrayList<>();
+        }
+        GuaHao guaHao = new GuaHao();
+        guaHao.docId = docId;
+        guaHao.docName = docName;
+        guaHao.firstDepId = firstDepId;
+        guaHao.firstDep = firstDep;
+        guaHao.secondDep = secondDep;
+        guaHao.secondDepId = secondDepId;
+        guaHao.createTime = createTime;
+        guaHao.reserveTime = reserveTime;
+        guaHao.fee = fee;
+        guaHao.reserveDate = reserveDate;
+        patients.get(position).guaHaos.add(guaHao);
+    }
+
+    public void deleteGuaHao(int p1, int p2) {
+        if (p1 >= patients.size() || patients.get(p1).guaHaos == null || p2 >= patients.get(p1).guaHaos.size())
+            return;
+        patients.get(p1).guaHaos.remove(p2);
     }
 
     public void reload() {

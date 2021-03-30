@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -21,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hospital.R;
 import com.example.hospital.Utils.DownloadBMPFromUrlUtils;
 import com.example.hospital.adapter.HorizontalListViewAdapter;
-import com.example.hospital.constant.HosptialConstant;
 import com.example.hospital.server.HospitalServer;
 import com.example.hospital.ui.HorizontalListView;
 

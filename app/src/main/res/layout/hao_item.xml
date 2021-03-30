@@ -1,36 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activity.ConfirmGuaHaoActivity">
-    <include
-        android:id="@+id/action_bar2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/new_activity_action_bar" />
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stretchColumns="*"
-        app:layout_constraintTop_toBottomOf="@id/action_bar2"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
         android:divider="@drawable/table_v_divider"
-        android:showDividers="middle|end"
+        android:showDividers="middle|end|beginning"
         android:id="@+id/table">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_marginBottom="5dp"
-            android:text="预约信息:"/>
 
         <TableRow
             android:layout_width="wrap_content"
@@ -63,9 +48,6 @@
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="1dp"
-            android:paddingRight="1dp"
-            android:paddingBottom="1dp"
 
             android:divider="@drawable/table_h_divider"
             android:orientation="horizontal"
@@ -92,9 +74,6 @@
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="1dp"
-            android:paddingRight="1dp"
-            android:paddingBottom="1dp"
             android:divider="@drawable/table_h_divider"
             android:orientation="horizontal"
             android:showDividers="middle|beginning|end">
@@ -120,9 +99,6 @@
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="1dp"
-            android:paddingRight="1dp"
-            android:paddingBottom="1dp"
             android:divider="@drawable/table_h_divider"
             android:orientation="horizontal"
             android:showDividers="middle|beginning|end">
@@ -148,9 +124,6 @@
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="1dp"
-            android:paddingRight="1dp"
-            android:paddingBottom="1dp"
             android:divider="@drawable/table_h_divider"
             android:orientation="horizontal"
             android:showDividers="middle|beginning|end">
@@ -173,56 +146,17 @@
                 android:textSize="20sp"
                 android:text="20元" />
         </TableRow>
+        <TextView
+            android:id="@+id/quxiao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:background="@color/green"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/radioGroupJiuZhenRen" />
     </TableLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        android:layout_marginBottom="5dp"
-        android:text="选择就诊人:"
-        app:layout_constraintTop_toBottomOf="@id/table"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:id="@+id/text1"/>
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/table"
-        android:src="@drawable/ic_baseline_add_24"
-        android:layout_marginTop="10dp"
-        android:id="@+id/add_jiu"
-        android:layout_marginRight="20dp"/>
-
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/text1"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="15dp"
-        android:id="@+id/radioGroupJiuZhenRen"
-        android:orientation="vertical">
-
-    </RadioGroup>
-
-    <Button
-        android:id="@+id/ok"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:text="确认"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:backgroundTint="@color/green"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/radioGroupJiuZhenRen" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

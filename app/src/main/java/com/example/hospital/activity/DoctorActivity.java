@@ -38,6 +38,8 @@ public class DoctorActivity extends AppCompatActivity {
     GuaHaoFragment fragment1;
     JianJieFragment fragment2;
     int thatDay;
+    public static String[] listAll = new String[] { "08:00~09:00", "09:00~10:00",
+            "10:00~11:00", "11:00~11:50", "14:00~15:00", "15:00~16:00", "16:00~16:50"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,7 +135,7 @@ public class DoctorActivity extends AppCompatActivity {
         TextView textView1;
         ListView listView;
         SimpleAdapter mListViewAdapter;
-        List<String> listAll = new ArrayList<>();
+
         List<Map<String, String>> list = new ArrayList<>();
         String docId, docName, docSpecialist, docTreatTime;
         String keshiSecond, keshiFirst;
@@ -144,13 +146,6 @@ public class DoctorActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
 
             View root = inflater.inflate(R.layout.fragment_yuyueguahao, container, false);
-            listAll.add("08:00~09:00");
-            listAll.add("09:00~10:00");
-            listAll.add("10:00~11:00");
-            listAll.add("11:00~11:50");
-            listAll.add("14:00~15:00");
-            listAll.add("15:00~16:00");
-            listAll.add("16:00~16:50");
             // 将example_fragment.xml作为该Fragment的布局文件
             textView1 = root.findViewById(R.id.day1);
             int p = (thatDay - GuaHaoXiangQingActivity.getDayofWeek("") + 7) % 7;
@@ -159,7 +154,7 @@ public class DoctorActivity extends AppCompatActivity {
             if (docTreatTime.charAt(thatDay *2) == '1') {
                 for (int i = 0; i < 4; ++i) {
                     Map<String, String> map = new HashMap<>();
-                    map.put("time", listAll.get(i));
+                    map.put("time", listAll[i]);
                     map.put("doc_spe", docSpecialist);
                     list.add(map);
                 }
@@ -167,7 +162,7 @@ public class DoctorActivity extends AppCompatActivity {
             if (docTreatTime.charAt(thatDay *2+1) == '1') {
                 for (int i = 0; i < 3; ++i) {
                     Map<String, String> map = new HashMap<>();
-                    map.put("time", listAll.get(i+4));
+                    map.put("time", listAll[i+4]);
                     map.put("doc_spe", docSpecialist);
                     list.add(map);
                 }
@@ -187,10 +182,20 @@ public class DoctorActivity extends AppCompatActivity {
                 intent.putExtra("keshi_second_id", keshiSecondId);
                 intent.putExtra("that_day", thatDay);
                 intent.putExtra("yuyueshijianduan", list.get(position).get("time"));
+                intent.putExtra("yuyueshijianduanindex", getNum(position));
                 startActivity(intent);
             });
             mListViewAdapter.notifyDataSetChanged();
             return root;
+        }
+
+        int getNum(int position) {
+            String time = list.get(position).get("time");
+            for (int i = 0; i < listAll.length; i++) {
+                if (time.equals(listAll[i]))
+                    return i;
+            }
+            return 0;
         }
     }
 

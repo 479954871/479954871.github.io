@@ -14,12 +14,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * 与服务器通信
@@ -77,6 +75,25 @@ public class HospitalServer {
                                 patients[i].address = json.optString("address", "");
                                 patients[i].wechatAccount = json.optString("wechat_account", "");
                                 patients[i].email = json.optString("email", "");
+                                JSONArray jsonArray1 = json.optJSONArray("guahao");
+                                patients[i].guaHaos = new ArrayList<>();
+                                if (jsonArray1 != null && jsonArray1.length() > 0) {
+                                    for (int j = 0; j < jsonArray1.length(); ++j) {
+                                        JSONObject json1 = jsonArray1.getJSONObject(j);
+                                        AccountManager.GuaHao guahao = new AccountManager.GuaHao();
+                                        guahao.docId = json1.optString("doc_id");
+                                        guahao.docName = json1.optString("doc_name");
+                                        guahao.firstDepId = Integer.parseInt(json1.optString("first_dep_id"));
+                                        guahao.secondDepId = Integer.parseInt(json1.optString("second_dep_id"));
+                                        guahao.firstDep = json1.optString("first_dep");
+                                        guahao.secondDep = json1.optString("second_dep");
+                                        guahao.createTime = json1.optString("create_time");
+                                        guahao.reserveDate = json1.optString("reserve_date");
+                                        guahao.reserveTime = Integer.parseInt(json1.optString("reserve_time"));
+                                        guahao.fee = json1.optDouble("fee");
+                                        patients[i].guaHaos.add(guahao);
+                                    }
+                                }
                             }
                             AccountManager.getInstance().setNowAccount(phone, patients, password);
                         } else {
@@ -411,4 +428,129 @@ public class HospitalServer {
         }).start();
     }
 
+    public interface GuaHaoCallback {
+        void GuaHaoSuccess();
+        void GuaHaoFailed();
+        void networkUnavailable();
+    }
+
+    /**
+     * 发送挂号请求
+     */
+    public static void sendGuaHaoRequest(String patientId, int firstDepId, int secondDepId,
+                                         String docId, String createTime, double fee,
+                                         String reserveDate, int reserveTime,
+                                         GuaHaoCallback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                BufferedReader reader = null;
+                try {
+                    URL url = new URL(HosptialConstant.WEBSITE + HosptialConstant.WEBSITE_GUA_HAO);
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(8000);
+                    connection.setReadTimeout(8000);
+                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                    out.writeBytes("patientid="+patientId+"&firstdepid="+firstDepId+
+                            "&seconddepid="+secondDepId+"&docid="+docId+ "&createtime="+
+                            createTime+"&fee="+fee+"&reservedate="+ reserveDate+"&reservetime="+reserveTime);
+                    InputStream in = connection.getInputStream();
+                    reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.d(TAG, response.toString());
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    String status = jsonObject.getString("status");
+                    if (status.equals("挂号成功") ){
+                        callback.GuaHaoSuccess();
+                    }else if(status.equals("此就诊人已挂号，挂号失败") ){
+                        callback.GuaHaoFailed();
+                    }
+                } catch (MalformedURLException e) {
+                    Log.e(TAG, "url form wrong");
+                    callback.networkUnavailable();
+                } catch (IOException e) {
+                    Log.e(TAG, "IOException 1:" + e.getMessage());
+                    callback.networkUnavailable();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (reader != null) {
+                        try { reader.close(); }
+                        catch (IOException e) { Log.e(TAG, "IOException 2:" +e.getMessage()); }
+                    }
+                    if (connection != null) {
+                        connection.disconnect();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public interface DeleteGuaHaoCallback {
+        void deleteSuccess();
+        void deleteFailed();
+        void networkUnavailable();
+    }
+
+    /**
+     * 发送注册请求
+     */
+    public static void sendDeleteGuaHaoRequest(String patientId, String docId, String createTime,
+                                               String reserveDate, String reserveTime,
+                                               DeleteGuaHaoCallback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                BufferedReader reader = null;
+                try {
+                    URL url = new URL(HosptialConstant.WEBSITE + HosptialConstant.WEBSITE_DELETE_GUA_HAO);
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(8000);
+                    connection.setReadTimeout(8000);
+                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                    out.writeBytes("docid="+docId+ "&createtime="+ createTime+"&reservedate="+
+                            reserveDate+"&reservetime="+reserveTime+"&patientid="+patientId);
+                    InputStream in = connection.getInputStream();
+                    reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.d(TAG, response.toString());
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    String status = jsonObject.getString("status");
+                    if (status.equals("取消挂号成功") ){
+                        callback.deleteSuccess();
+                    }else if(status.equals("取消挂号失败，挂号信息不存在") ){
+                        callback.deleteFailed();
+                    }
+                } catch (MalformedURLException e) {
+                    Log.e(TAG, "url form wrong");
+                    callback.networkUnavailable();
+                } catch (IOException e) {
+                    Log.e(TAG, "IOException 1:" + e.getMessage());
+                    callback.networkUnavailable();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (reader != null) {
+                        try { reader.close(); }
+                        catch (IOException e) { Log.e(TAG, "IOException 2:" +e.getMessage()); }
+                    }
+                    if (connection != null) {
+                        connection.disconnect();
+                    }
+                }
+            }
+        }).start();
+    }
 }

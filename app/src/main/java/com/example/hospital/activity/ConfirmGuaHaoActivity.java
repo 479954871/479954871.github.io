@@ -1,11 +1,16 @@
 package com.example.hospital.activity;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,18 +22,25 @@ import android.widget.Toast;
 
 import com.example.hospital.R;
 import com.example.hospital.account.AccountManager;
+import com.example.hospital.payment.PayResult;
+import com.example.hospital.payment.PayUtils;
+import com.example.hospital.server.HospitalServer;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class ConfirmGuaHaoActivity extends AppCompatActivity {
     String docId, docName, docSpecialist, time;
+    int timeIndex;
     Bitmap docPic;
     String keshiSecond, keshiFirst;
     int jiuZhenRenNum = 0;
+    List<AccountManager.JiuZhenRen> jiuZhenRens;
+    int position = 0;
     @Override
     protected void onResume() {
         super.onResume();
-        List<AccountManager.JiuZhenRen> jiuZhenRens =  AccountManager.getInstance().getJiuZhenRen();
+        jiuZhenRens =  AccountManager.getInstance().getJiuZhenRen();
         for (int i = jiuZhenRenNum; i < jiuZhenRens.size(); ++i) {
             //radioButton
             RadioButton radioButton = new RadioButton(this);
@@ -61,6 +73,7 @@ public class ConfirmGuaHaoActivity extends AppCompatActivity {
     TextView textView1, textView2, textView3, textView4;
     RadioGroup radioGroup;
     ImageView add;
+    String createTime, reserveDate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +89,7 @@ public class ConfirmGuaHaoActivity extends AppCompatActivity {
         keshiFirstId = getIntent().getIntExtra("keshi_first_id", 0);
         keshiSecondId = getIntent().getIntExtra("keshi_second_id", 0);
         time = getIntent().getStringExtra("yuyueshijianduan");
+        timeIndex = getIntent().getIntExtra("yuyueshijianduanindex", 0);
         TextView textView = findViewById(R.id.main_head_title);
         textView.setText("确认挂号");
         ImageView backView = findViewById(R.id.back);
@@ -104,11 +118,7 @@ public class ConfirmGuaHaoActivity extends AppCompatActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                for (int i = 0; i < jiuZhenRenNum; ++i) {
-                    if (checkedId == i) {
-                        //TODO 根据预约信息和就诊人信息和服务器通信
-                    }
-                }
+                position = checkedId;
             }
         });
         Button button = findViewById(R.id.ok);
@@ -116,6 +126,87 @@ public class ConfirmGuaHaoActivity extends AppCompatActivity {
             if (jiuZhenRenNum == 0) {
                 Toast.makeText(this, "请先添加就诊人", Toast.LENGTH_SHORT).show();
             }
+            //TODO 根据预约信息和就诊人信息和服务器通信
+            reserveDate = GuaHaoXiangQingActivity.years[p] + "-" + GuaHaoXiangQingActivity.months[p] + "-" + GuaHaoXiangQingActivity.dates[p];
+            createTime = getTime();
+            Intent intent = new Intent(ConfirmGuaHaoActivity.this, PaymentActivity.class);
+            intent.putExtra("fee", 20.0);
+            startActivityForResult(intent, 1);
         });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == 1) {
+            int what = data.getIntExtra("what", 3);
+            String result = data.getStringExtra("obj");
+            Message msg = new Message();
+            if (what == 0) {
+                HospitalServer.sendGuaHaoRequest(jiuZhenRens.get(position).patientId, keshiFirstId,
+                        keshiSecondId, docId, createTime, 20, reserveDate, timeIndex,
+                        new HospitalServer.GuaHaoCallback() {
+                            @Override
+                            public void GuaHaoSuccess() {
+                                Message msg = new Message();
+                                msg.what = 0;
+                                handler.sendMessage(msg);
+                            }
+                            @Override
+                            public void GuaHaoFailed() {
+                                Message msg = new Message();
+                                msg.what = 1;
+                                handler.sendMessage(msg);
+                            }
+                            @Override
+                            public void networkUnavailable() {
+                                Message msg = new Message();
+                                msg.what = 2;
+                                handler.sendMessage(msg);
+                            }
+                        });
+            } else {
+                msg.what = what;
+                msg.obj = result;
+                handler.sendMessage(msg);
+            }
+        }
+    }
+
+    private String getTime() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH)+1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        int second = calendar.get(Calendar.SECOND);
+        return (year+"-"+month+"-"+day+" "+hour+":"+minute+":"+second);
+    }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:
+                    Toast.makeText(ConfirmGuaHaoActivity.this, "挂号成功", Toast.LENGTH_SHORT).show();
+                    Log.w("PAY", "handleMessage: " + msg.obj);
+                    AccountManager.getInstance().addGuaHao(position, docId, docName, keshiFirstId,
+                    keshiFirst, keshiSecondId, keshiSecond, createTime, reserveDate, timeIndex, 20);
+                    finish();
+                    break;
+                case 1:
+                    Toast.makeText(ConfirmGuaHaoActivity.this, "挂号失败，就诊人已挂号", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    Toast.makeText(ConfirmGuaHaoActivity.this, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
+                    break;
+                case 3:
+                    Toast.makeText(ConfirmGuaHaoActivity.this, "支付失败 " + msg.obj, Toast.LENGTH_SHORT).show();
+                    Log.w("PAY", "handleMessage: " + msg.obj);
+                    break;
+            }
+        }
+    };
 }
