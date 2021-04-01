@@ -28,6 +28,12 @@ public class HosptialConstant {
 
     public static final String WEBSITE_DELETE_GUA_HAO = "deleteguahao/";
 
+    public static final String WEBSITE_PAYMENT = "payment/";
+
+    public static final String WEBSITE_REPORT = "report/";
+
+    public static final String WEBSITE_PAY = "pay/";
+
     public static final String ALIPAY_APPID = "2021000117629251";
 
     public static final String ALIPAY_TARGET_ID = "xnjnru7464@sandbox.com";

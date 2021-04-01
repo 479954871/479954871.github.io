@@ -22,6 +22,7 @@ import com.example.hospital.account.AccountManager;
 import com.example.hospital.activity.MenZhenGuaHaoActivity;
 import com.example.hospital.activity.SignInActivity;
 import com.example.hospital.activity.YiYuanJieShaoActivity;
+import com.example.hospital.activity.ZaiXianJiaoFeiActivity;
 import com.example.hospital.adapter.BannerAdapter;
 import com.example.hospital.constant.HosptialConstant;
 
@@ -107,6 +108,16 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
             Intent intent = new Intent(getActivity(), MenZhenGuaHaoActivity.class);
+            startActivity(intent);
+        });
+
+        ImageView imageView3 = root.findViewById(R.id.zaixianjiaofei);
+        imageView3.setOnClickListener(v -> {
+            if (AccountManager.getInstance().getNowAccount().equals("")) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            }
+            Intent intent = new Intent(getActivity(), ZaiXianJiaoFeiActivity.class);
             startActivity(intent);
         });
 

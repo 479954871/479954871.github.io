@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hospital.R;
+import com.example.hospital.Utils.HosptialUtils;
 import com.example.hospital.account.AccountManager;
 import com.example.hospital.payment.PayResult;
 import com.example.hospital.payment.PayUtils;
@@ -128,7 +129,7 @@ public class ConfirmGuaHaoActivity extends AppCompatActivity {
             }
             //TODO 根据预约信息和就诊人信息和服务器通信
             reserveDate = GuaHaoXiangQingActivity.years[p] + "-" + GuaHaoXiangQingActivity.months[p] + "-" + GuaHaoXiangQingActivity.dates[p];
-            createTime = getTime();
+            createTime = HosptialUtils.getTime();
             Intent intent = new Intent(ConfirmGuaHaoActivity.this, PaymentActivity.class);
             intent.putExtra("fee", 20.0);
             startActivityForResult(intent, 1);
@@ -171,17 +172,6 @@ public class ConfirmGuaHaoActivity extends AppCompatActivity {
                 handler.sendMessage(msg);
             }
         }
-    }
-
-    private String getTime() {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH)+1;
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        int second = calendar.get(Calendar.SECOND);
-        return (year+"-"+month+"-"+day+" "+hour+":"+minute+":"+second);
     }
 
     private Handler handler = new Handler(){

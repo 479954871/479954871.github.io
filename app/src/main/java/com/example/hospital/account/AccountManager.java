@@ -1,10 +1,13 @@
 package com.example.hospital.account;
 
+import androidx.annotation.Nullable;
+
 import com.example.hospital.server.HospitalServer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class AccountManager {
 
@@ -23,6 +26,8 @@ public class AccountManager {
         public String wechatAccount;
         public String email;
         public List<GuaHao> guaHaos;
+        public List<Payment> payments;
+        public List<Report> reports;
     };
 
     public static class GuaHao {
@@ -36,6 +41,34 @@ public class AccountManager {
         public String reserveDate;
         public int reserveTime;
         public double fee;
+    }
+    public static class Payment {
+        public String docName;
+        public boolean isPay;
+        public int reportId;
+        public double amount;
+        public String data;
+        public int taskId;
+        public String paymentTime;
+        @Override
+        public boolean equals(@Nullable Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            return taskId == ((Payment) o).taskId;
+        }
+        @Override
+        public int hashCode() {
+            return taskId;
+        }
+    }
+    public static class Report {
+        public String docName;
+        public String reportTime;
+        public String reportTitle;
+        public String reportData;
+        public int reportId;
+        public String firstDep;
+        public String secondDep;
     }
     private final List<JiuZhenRen> patients = new ArrayList<>();
 

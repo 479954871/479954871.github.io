@@ -20,6 +20,7 @@ import com.example.hospital.activity.GuaHaoGuanLiActivity;
 import com.example.hospital.activity.JiaoFeiGuanLiActivity;
 import com.example.hospital.activity.JiuZhenRenGuanLiActivity;
 import com.example.hospital.activity.MyAccountActivity;
+import com.example.hospital.activity.ReportGuanLiActivity;
 import com.example.hospital.activity.SignInActivity;
 import com.example.hospital.R;
 
@@ -92,6 +93,16 @@ public class MineFragment extends Fragment {
                 startActivity(intent);
             } else {
                 Intent intent = new Intent(getActivity(), JiaoFeiGuanLiActivity.class);
+                startActivity(intent);
+            }
+        });
+        LinearLayout linearLayout3 = root.findViewById(R.id.linear3);
+        linearLayout3.setOnClickListener(v -> {
+            if (AccountManager.getInstance().getNowAccount().equals("")) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), ReportGuanLiActivity.class);
                 startActivity(intent);
             }
         });

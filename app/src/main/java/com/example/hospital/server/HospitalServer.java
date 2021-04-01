@@ -2,6 +2,7 @@ package com.example.hospital.server;
 
 import android.util.Log;
 
+import com.example.hospital.Utils.HosptialUtils;
 import com.example.hospital.account.AccountManager;
 import com.example.hospital.constant.HosptialConstant;
 
@@ -68,15 +69,18 @@ public class HospitalServer {
                                 patients[i] = new AccountManager.JiuZhenRen();
                                 patients[i].patientId = json.optString("patient_id", "");
                                 patients[i].name = json.optString("name", "");
-                                String temp = json.optString("sex", "1");
-                                patients[i].sex = temp.equals("1");
+                                patients[i].sex = "1".equals(json.optString("sex", "1"));
                                 patients[i].age = json.optInt("age", 0);
                                 patients[i].phone = json.optString("phone", "");
                                 patients[i].address = json.optString("address", "");
                                 patients[i].wechatAccount = json.optString("wechat_account", "");
                                 patients[i].email = json.optString("email", "");
                                 JSONArray jsonArray1 = json.optJSONArray("guahao");
+                                JSONArray jsonArray2 = json.optJSONArray("payment");
+                                JSONArray jsonArray3 = json.optJSONArray("report");
                                 patients[i].guaHaos = new ArrayList<>();
+                                patients[i].payments = new ArrayList<>();
+                                patients[i].reports = new ArrayList<>();
                                 if (jsonArray1 != null && jsonArray1.length() > 0) {
                                     for (int j = 0; j < jsonArray1.length(); ++j) {
                                         JSONObject json1 = jsonArray1.getJSONObject(j);
@@ -92,6 +96,42 @@ public class HospitalServer {
                                         guahao.reserveTime = Integer.parseInt(json1.optString("reserve_time"));
                                         guahao.fee = json1.optDouble("fee");
                                         patients[i].guaHaos.add(guahao);
+                                    }
+                                }
+                                if (jsonArray2 != null && jsonArray2.length() > 0) {
+                                    for (int j = 0; j < jsonArray2.length(); ++j) {
+                                        JSONObject json1 = jsonArray2.getJSONObject(j);
+                                        AccountManager.Payment payment = new AccountManager.Payment();
+                                        payment.docName = json1.optString("doc_name");
+                                        payment.data = json1.optString("data");
+                                        payment.isPay = "t".equals(json1.optString("second_dep"));
+                                        payment.reportId = json1.optInt("report_id");
+                                        payment.taskId = json1.optInt("task_id");
+                                        payment.amount = json1.optDouble("amount");
+                                        String temp = json1.optString("time");
+                                        if (temp.indexOf('T') != -1) {
+                                            temp = temp.substring(0, temp.indexOf('T')) + " " + temp.substring(temp.indexOf('T')+1);
+                                        }
+                                        payment.paymentTime = temp;
+                                        patients[i].payments.add(payment);
+                                    }
+                                }
+                                if (jsonArray3 != null && jsonArray3.length() > 0) {
+                                    for (int j = 0; j < jsonArray3.length(); ++j) {
+                                        JSONObject json1 = jsonArray3.getJSONObject(j);
+                                        AccountManager.Report report = new AccountManager.Report();
+                                        report.docName = json1.optString("doc_name");
+                                        report.reportData = json1.optString("data");
+                                        report.reportId = json1.optInt("report_id");
+                                        report.reportTitle = json1.optString("title");
+                                        report.firstDep = json1.optString("first_dep");
+                                        report.secondDep = json1.optString("second_dep");
+                                        String temp = json1.optString("time");
+                                        if (temp.indexOf('T') != -1) {
+                                            temp = temp.substring(0, temp.indexOf('T')) + " " + temp.substring(temp.indexOf('T')+1);
+                                        }
+                                        report.reportTime = temp;
+                                        patients[i].reports.add(report);
                                     }
                                 }
                             }
@@ -319,7 +359,7 @@ public class HospitalServer {
     }
 
     /**
-     * 发送注册请求
+     * 发送删除就诊人请求
      */
     public static void sendDeletePatientRequest(String phone, String patientId, DeletePatientCallback callback) {
         new Thread(new Runnable() {
@@ -499,7 +539,7 @@ public class HospitalServer {
     }
 
     /**
-     * 发送注册请求
+     * 发送取消挂号请求
      */
     public static void sendDeleteGuaHaoRequest(String patientId, String docId, String createTime,
                                                String reserveDate, String reserveTime,
@@ -532,6 +572,177 @@ public class HospitalServer {
                         callback.deleteSuccess();
                     }else if(status.equals("取消挂号失败，挂号信息不存在") ){
                         callback.deleteFailed();
+                    }
+                } catch (MalformedURLException e) {
+                    Log.e(TAG, "url form wrong");
+                    callback.networkUnavailable();
+                } catch (IOException e) {
+                    Log.e(TAG, "IOException 1:" + e.getMessage());
+                    callback.networkUnavailable();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (reader != null) {
+                        try { reader.close(); }
+                        catch (IOException e) { Log.e(TAG, "IOException 2:" +e.getMessage()); }
+                    }
+                    if (connection != null) {
+                        connection.disconnect();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public interface GetPaymentCallback {
+        void getSuccess(JSONObject jsonObject);
+        void networkUnavailable();
+    }
+
+    /**
+     * 发送缴费信息请求
+     */
+    public static void sendPaymentRequest(String phone, GetPaymentCallback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                BufferedReader reader = null;
+                try {
+                    URL url = new URL(HosptialConstant.WEBSITE + HosptialConstant.WEBSITE_PAYMENT);
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(8000);
+                    connection.setReadTimeout(8000);
+                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                    out.writeBytes("phone="+phone);
+                    InputStream in = connection.getInputStream();
+                    reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.d(TAG, response.toString());
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    String status = jsonObject.getString("status");
+                    if (status.equals("查询缴费信息成功") ){
+                        callback.getSuccess(jsonObject);
+                    }
+                } catch (MalformedURLException e) {
+                    Log.e(TAG, "url form wrong");
+                    callback.networkUnavailable();
+                } catch (IOException e) {
+                    Log.e(TAG, "IOException 1:" + e.getMessage());
+                    callback.networkUnavailable();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (reader != null) {
+                        try { reader.close(); }
+                        catch (IOException e) { Log.e(TAG, "IOException 2:" +e.getMessage()); }
+                    }
+                    if (connection != null) {
+                        connection.disconnect();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public interface GetReportCallback {
+        void getSuccess(JSONObject jsonObject);
+        void networkUnavailable();
+    }
+
+    /**
+     * 发送电子报告请求
+     */
+    public static void sendReportRequest(String phone, GetReportCallback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                BufferedReader reader = null;
+                try {
+                    URL url = new URL(HosptialConstant.WEBSITE + HosptialConstant.WEBSITE_REPORT);
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(8000);
+                    connection.setReadTimeout(8000);
+                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                    out.writeBytes("phone="+phone);
+                    InputStream in = connection.getInputStream();
+                    reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.d(TAG, response.toString());
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    String status = jsonObject.getString("status");
+                    if (status.equals("查询电子报告成功") ){
+                        callback.getSuccess(jsonObject);
+                    }
+                } catch (MalformedURLException e) {
+                    Log.e(TAG, "url form wrong");
+                    callback.networkUnavailable();
+                } catch (IOException e) {
+                    Log.e(TAG, "IOException 1:" + e.getMessage());
+                    callback.networkUnavailable();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (reader != null) {
+                        try { reader.close(); }
+                        catch (IOException e) { Log.e(TAG, "IOException 2:" +e.getMessage()); }
+                    }
+                    if (connection != null) {
+                        connection.disconnect();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public interface PayCallback {
+        void paySuccess();
+        void payFailed();
+        void networkUnavailable();
+    }
+
+    /**
+     * 发送取消挂号请求
+     */
+    public static void sendPayRequest(String taskId, String time, PayCallback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                BufferedReader reader = null;
+                try {
+                    URL url = new URL(HosptialConstant.WEBSITE + HosptialConstant.WEBSITE_PAY);
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(8000);
+                    connection.setReadTimeout(8000);
+                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                    out.writeBytes("taskid="+taskId+"&time="+time);
+                    InputStream in = connection.getInputStream();
+                    reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.d(TAG, response.toString());
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    String status = jsonObject.getString("status");
+                    if (status.equals("支付成功") ){
+                        callback.paySuccess();
+                    }else if(status.equals("订单信息不存在") || status.equals("订单已付款")){
+                        callback.payFailed();
                     }
                 } catch (MalformedURLException e) {
                     Log.e(TAG, "url form wrong");

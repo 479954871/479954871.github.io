@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JiaoFeiGuanLiActivity extends AppCompatActivity {
+public class ReportGuanLiActivity extends AppCompatActivity {
     RadioGroup radioGroup;
     List<AccountManager.JiuZhenRen> jiuZhenRens;
     int position = 0;
@@ -32,9 +32,9 @@ public class JiaoFeiGuanLiActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_jiao_fei_guan_li);
+        setContentView(R.layout.activity_report_guan_li);
         TextView textView = findViewById(R.id.main_head_title);
-        textView.setText("我的缴费记录");
+        textView.setText("我的电子报告");
         ImageView backView = findViewById(R.id.back);
         backView.setOnClickListener(v -> {
             finish();
@@ -43,9 +43,9 @@ public class JiaoFeiGuanLiActivity extends AppCompatActivity {
         actionBar.hide();
         changeList(0);
         listView = findViewById(R.id.listview_guahao2);
-        mListViewAdapter = new SimpleAdapter(this, list, R.layout.jiaofei_item,
-                new String[] {"text", "fee", "create_time"},
-                new int[] {R.id.text11, R.id.text13, R.id.text12});
+        mListViewAdapter = new SimpleAdapter(this, list, R.layout.report_item,
+                new String[] {"title", "doc_name", "time", "data"},
+                new int[] {R.id.title, R.id.doc_name, R.id.report_time, R.id.report_data});
         listView.setAdapter(mListViewAdapter);
 
 
@@ -78,30 +78,16 @@ public class JiaoFeiGuanLiActivity extends AppCompatActivity {
             }
         });
     }
-
     void changeList(int position) {
         jiuZhenRens = AccountManager.getInstance().getJiuZhenRen();
         list.clear();
-        if (jiuZhenRens.get(position).guaHaos != null && jiuZhenRens.get(position).guaHaos.size() > 0) {
-            for (AccountManager.GuaHao guaHao : jiuZhenRens.get(position).guaHaos) {
+        if (jiuZhenRens.get(position).reports != null && jiuZhenRens.get(position).reports.size() > 0) {
+            for (AccountManager.Report report : jiuZhenRens.get(position).reports) {
                 Map<String, String> map = new HashMap<>();
-                map.put("text", "挂号");
-                map.put("fee", "￥" + guaHao.fee);
-                String temp = guaHao.createTime;
-                if (temp.indexOf('T') != -1) {
-                    temp = temp.substring(0, temp.indexOf('T')) + " " + temp.substring(temp.indexOf('T')+1);
-                }
-                map.put("create_time", temp);
-                list.add(map);
-            }
-        }
-        if (jiuZhenRens.get(position).payments != null && jiuZhenRens.get(position).payments.size() > 0) {
-            for (AccountManager.Payment payment : jiuZhenRens.get(position).payments) {
-                if (!payment.isPay) continue;
-                Map<String, String> map = new HashMap<>();
-                map.put("text", TextUtils.isEmpty(payment.data)?"诊断":payment.data);
-                map.put("fee", "￥" + payment.amount);
-                map.put("create_time", payment.paymentTime);
+                map.put("title", report.reportTitle);
+                map.put("doc_name", report.docName);
+                map.put("time", report.reportTime);
+                map.put("data", report.reportData);
                 list.add(map);
             }
         }

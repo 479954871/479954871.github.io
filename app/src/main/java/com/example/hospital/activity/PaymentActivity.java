@@ -18,9 +18,6 @@ import com.example.hospital.payment.PayUtils;
 
 public class PaymentActivity extends AppCompatActivity {
     double fee;
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +37,7 @@ public class PaymentActivity extends AppCompatActivity {
         constraintLayout.setOnClickListener(v -> {});
         Button button = findViewById(R.id.pay);
         button.setOnClickListener(v -> {
-            PayUtils.pay(PaymentActivity.this, 20, new PayUtils.PaymentCallBack() {
+            PayUtils.pay(PaymentActivity.this, fee, new PayUtils.PaymentCallBack() {
                 @Override
                 public void paySuccess(PayResult payResult) {
                     final Intent intent = getIntent();//在B类中得到原来的activity
