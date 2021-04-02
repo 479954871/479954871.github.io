@@ -1,59 +1,44 @@
 package com.example.hospital.activity;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.hospital.account.AccountManager;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.example.hospital.R;
 import com.example.hospital.adapter.GuaHaoFirstRecyclerAdapter;
 import com.example.hospital.adapter.GuaHaoSecondRecyclerAdapter;
-import com.example.hospital.R;
-import com.example.hospital.server.HospitalServer;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * 门诊挂号
+ * 线上问诊
  */
-public class MenZhenGuaHaoActivity extends AppCompatActivity {
-    public static List<String> keshiFirst;
-    public static List<List<String>> keshiSecond;
+public class XianShangWenZhenActivity extends AppCompatActivity {
+    private List<String> keshiFirst;
+    private List<List<String>> keshiSecond;
     private RecyclerView recyclerViewFirst, recyclerViewSecond;
     private GuaHaoFirstRecyclerAdapter adapterFirst;
     private GuaHaoSecondRecyclerAdapter adapterSecond;
     int firstPosition = 0;
-
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (AccountManager.getInstance().getNowAccount().equals("")) {
-            Intent intent = new Intent(this, SignInActivity.class);
-            startActivity(intent);
-        }
-    }
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_men_zhen_gua_hao_layout);
+        setContentView(R.layout.activity_xian_shang_wen_zhen);
         TextView textView = findViewById(R.id.main_head_title);
-        textView.setText("科室列表");
+        textView.setText("线上问诊——选择科室");
         ImageView backView = findViewById(R.id.back);
         backView.setOnClickListener(v -> {
-            MenZhenGuaHaoActivity.this.finish();
+            finish();
         });
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
@@ -81,7 +66,7 @@ public class MenZhenGuaHaoActivity extends AppCompatActivity {
         adapterSecond.setOnItemClickListener(new GuaHaoSecondRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(MenZhenGuaHaoActivity.this, GuaHaoXiangQingActivity.class);
+                Intent intent = new Intent(XianShangWenZhenActivity.this, ChooseDoctorActivity.class);
                 intent.putExtra("keshi_first", keshiFirst.get(firstPosition));
                 intent.putExtra("keshi_second", keshiSecond.get(firstPosition).get(position));
                 intent.putExtra("keshi_first_id", firstPosition);
@@ -96,13 +81,10 @@ public class MenZhenGuaHaoActivity extends AppCompatActivity {
         });
         recyclerViewSecond.setAdapter(adapterSecond);
         recyclerViewSecond.addItemDecoration(new DividerItemDecoration(
-                MenZhenGuaHaoActivity.this, DividerItemDecoration.VERTICAL));
+                XianShangWenZhenActivity.this, DividerItemDecoration.VERTICAL));
     }
 
-    /**
-     * 获取科室名，本应是通过网络从服务器获取，现简化为从本地读取。
-     */
-    public static void getKeshiList() {
+    private void getKeshiList() {
         keshiFirst = new ArrayList<>(Arrays.asList("康复医学科", "中医科", "医学影像科", "感染科",
                 "健康管理中心", "眼科", "内科", "耳鼻咽喉科", "儿科", "口腔科", "皮肤科", "妇产科",
                 "生殖医学中心", "骨科", "其他科室","外科", "肿瘤科"));
@@ -138,4 +120,5 @@ public class MenZhenGuaHaoActivity extends AppCompatActivity {
                 "鼻咽放疗一科", "门诊放疗部", "乳腺肿瘤内科", "头颈乳腺放疗科", "头颈胸肿瘤内科",
                 "胃肠肿瘤内科", "胸腹放疗科", "肿瘤靶向介入科")));
     }
+
 }

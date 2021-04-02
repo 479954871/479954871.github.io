@@ -34,6 +34,10 @@ public class HosptialConstant {
 
     public static final String WEBSITE_PAY = "pay/";
 
+    public static final String WEBSITE_COMMUNICATE = "communicate/";
+
+    public static final String WEBSITE_GET_DOCTOR_FROM_ID = "getdoctor/";
+
     public static final String ALIPAY_APPID = "2021000117629251";
 
     public static final String ALIPAY_TARGET_ID = "xnjnru7464@sandbox.com";

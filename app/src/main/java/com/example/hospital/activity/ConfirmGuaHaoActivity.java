@@ -106,7 +106,7 @@ public class ConfirmGuaHaoActivity extends AppCompatActivity {
         textView4 = findViewById(R.id.yuyue_time);
         textView1.setText(keshiSecond);
         textView2.setText(docName);
-        int p = (thatDay - GuaHaoXiangQingActivity.getDayofWeek("") + 7) % 7;
+        int p = (thatDay - HosptialUtils.getDayofWeek("") + 7) % 7;
         textView3.setText(GuaHaoXiangQingActivity.years[p] + "年" + GuaHaoXiangQingActivity.months[p] + "月" + GuaHaoXiangQingActivity.dates[p] + "日");
         textView4.setText(time);
         add = findViewById(R.id.add_jiu);

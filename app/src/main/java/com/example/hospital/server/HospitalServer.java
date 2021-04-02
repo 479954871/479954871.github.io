@@ -2,7 +2,6 @@ package com.example.hospital.server;
 
 import android.util.Log;
 
-import com.example.hospital.Utils.HosptialUtils;
 import com.example.hospital.account.AccountManager;
 import com.example.hospital.constant.HosptialConstant;
 
@@ -19,6 +18,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 与服务器通信
@@ -104,7 +105,7 @@ public class HospitalServer {
                                         AccountManager.Payment payment = new AccountManager.Payment();
                                         payment.docName = json1.optString("doc_name");
                                         payment.data = json1.optString("data");
-                                        payment.isPay = "t".equals(json1.optString("second_dep"));
+                                        payment.isPay = "t".equals(json1.optString("is_pay"));
                                         payment.reportId = json1.optInt("report_id");
                                         payment.taskId = json1.optInt("task_id");
                                         payment.amount = json1.optDouble("amount");
@@ -139,8 +140,26 @@ public class HospitalServer {
                         } else {
                             AccountManager.getInstance().setNowAccount(phone, null, password);
                         }
-
-
+                        JSONArray jsonArray1 = jsonObject.optJSONArray("communication");
+                        Map<String, List<AccountManager.Msg>> messages = AccountManager.getInstance().messages;
+                        if (jsonArray1 != null && jsonArray1.length() > 0) {
+                            for (int i = 0; i < jsonArray1.length(); i++) {
+                                JSONObject json = jsonArray1.getJSONObject(i);
+                                AccountManager.Msg msg = new AccountManager.Msg();
+                                msg.firstDepId = Integer.parseInt(json.optString("first_dep_id"));
+                                msg.docId = json.optString("doc_id");
+                                msg.secondDepId = Integer.parseInt(json.optString("second_dep_id"));
+                                msg.docName = json.optString("doc_name");
+                                msg.data = json.optString("data");
+                                msg.time = json.optString("time");
+                                msg.index = Integer.parseInt(json.optString("index"));
+                                msg.whoSend = json.optString("who_send");
+                                if (!messages.containsKey(msg.getKey())) {
+                                    messages.put(msg.getKey(), new ArrayList<>());
+                                }
+                                messages.get(msg.getKey()).add(msg);
+                            }
+                        }
                     }else if(status.equals("登录失败") ){
                         callback.loginFailed();
 
@@ -743,6 +762,120 @@ public class HospitalServer {
                         callback.paySuccess();
                     }else if(status.equals("订单信息不存在") || status.equals("订单已付款")){
                         callback.payFailed();
+                    }
+                } catch (MalformedURLException e) {
+                    Log.e(TAG, "url form wrong");
+                    callback.networkUnavailable();
+                } catch (IOException e) {
+                    Log.e(TAG, "IOException 1:" + e.getMessage());
+                    callback.networkUnavailable();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (reader != null) {
+                        try { reader.close(); }
+                        catch (IOException e) { Log.e(TAG, "IOException 2:" +e.getMessage()); }
+                    }
+                    if (connection != null) {
+                        connection.disconnect();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public interface CommunicateCallback {
+        void communicateSuccess(JSONObject jsonObject);
+        void networkUnavailable();
+    }
+
+    /**
+     * 发送线上问诊请求
+     */
+    public static void sendCommunicateRequest(String phone, AccountManager.Msg msg, CommunicateCallback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                BufferedReader reader = null;
+                try {
+                    URL url = new URL(HosptialConstant.WEBSITE + HosptialConstant.WEBSITE_COMMUNICATE);
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(8000);
+                    connection.setReadTimeout(8000);
+                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                    out.writeBytes("phone="+phone+"&docid="+msg.docId+"&index="+msg.index+
+                            "&time="+msg.time+"&data="+msg.data+"&whosend="+msg.whoSend);
+                    InputStream in = connection.getInputStream();
+                    reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.d(TAG, response.toString());
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    String status = jsonObject.getString("status");
+                    if (status.equals("消息记录成功") ){
+                        callback.communicateSuccess(jsonObject);
+                    }
+                } catch (MalformedURLException e) {
+                    Log.e(TAG, "url form wrong");
+                    callback.networkUnavailable();
+                } catch (IOException e) {
+                    Log.e(TAG, "IOException 1:" + e.getMessage());
+                    callback.networkUnavailable();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (reader != null) {
+                        try { reader.close(); }
+                        catch (IOException e) { Log.e(TAG, "IOException 2:" +e.getMessage()); }
+                    }
+                    if (connection != null) {
+                        connection.disconnect();
+                    }
+                }
+            }
+        }).start();
+    }
+
+
+    public interface GetDoctorFromIdCallback {
+        void getSuccess(JSONObject jsonObject);
+        void networkUnavailable();
+    }
+
+    /**
+     * 发送线上问诊请求
+     */
+    public static void sendGetDoctorFromIdRequest(String docId, GetDoctorFromIdCallback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                BufferedReader reader = null;
+                try {
+                    URL url = new URL(HosptialConstant.WEBSITE + HosptialConstant.WEBSITE_GET_DOCTOR_FROM_ID);
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(8000);
+                    connection.setReadTimeout(8000);
+                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                    out.writeBytes("docid="+docId);
+                    InputStream in = connection.getInputStream();
+                    reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    Log.d(TAG, response.toString());
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    String status = jsonObject.getString("status");
+                    if (status.equals("医生信息返回成功") ){
+                        callback.getSuccess(jsonObject);
                     }
                 } catch (MalformedURLException e) {
                     Log.e(TAG, "url form wrong");

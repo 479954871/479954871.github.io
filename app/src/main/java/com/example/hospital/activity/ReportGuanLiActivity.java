@@ -34,7 +34,7 @@ public class ReportGuanLiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_guan_li);
         TextView textView = findViewById(R.id.main_head_title);
-        textView.setText("我的电子报告");
+        textView.setText("电子报告");
         ImageView backView = findViewById(R.id.back);
         backView.setOnClickListener(v -> {
             finish();

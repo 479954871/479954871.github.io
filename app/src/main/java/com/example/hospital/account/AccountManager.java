@@ -6,6 +6,7 @@ import com.example.hospital.server.HospitalServer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +71,25 @@ public class AccountManager {
         public String firstDep;
         public String secondDep;
     }
+
+    public static class Msg {
+        public int firstDepId;
+        public int secondDepId;
+        public String docId;
+        public String docName;
+        public String data;
+        public String time;
+        public int index;
+        public String whoSend;
+
+        public String getKey() {
+            return (firstDepId *100+ secondDepId) + docName;
+        }
+    }
+
     private final List<JiuZhenRen> patients = new ArrayList<>();
+
+    public final Map<String, List<Msg>> messages = new HashMap<>();
 
     private AccountManager() {
         init();

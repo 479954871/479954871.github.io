@@ -20,7 +20,9 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.hospital.R;
 import com.example.hospital.account.AccountManager;
 import com.example.hospital.activity.MenZhenGuaHaoActivity;
+import com.example.hospital.activity.ReportGuanLiActivity;
 import com.example.hospital.activity.SignInActivity;
+import com.example.hospital.activity.XianShangWenZhenActivity;
 import com.example.hospital.activity.YiYuanJieShaoActivity;
 import com.example.hospital.activity.ZaiXianJiaoFeiActivity;
 import com.example.hospital.adapter.BannerAdapter;
@@ -120,7 +122,24 @@ public class HomeFragment extends Fragment {
             Intent intent = new Intent(getActivity(), ZaiXianJiaoFeiActivity.class);
             startActivity(intent);
         });
-
+        ImageView imageView4 = root.findViewById(R.id.dianzibaogao);
+        imageView4.setOnClickListener(v -> {
+            if (AccountManager.getInstance().getNowAccount().equals("")) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            }
+            Intent intent = new Intent(getActivity(), ReportGuanLiActivity.class);
+            startActivity(intent);
+        });
+        ImageView imageView5 = root.findViewById(R.id.xianshangwenzhen);
+        imageView5.setOnClickListener(v -> {
+            if (AccountManager.getInstance().getNowAccount().equals("")) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            }
+            Intent intent = new Intent(getActivity(), XianShangWenZhenActivity.class);
+            startActivity(intent);
+        });
         return root;
     }
 

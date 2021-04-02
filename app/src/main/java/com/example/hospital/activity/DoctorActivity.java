@@ -19,6 +19,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.hospital.R;
+import com.example.hospital.Utils.HosptialUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -148,7 +149,7 @@ public class DoctorActivity extends AppCompatActivity {
             View root = inflater.inflate(R.layout.fragment_yuyueguahao, container, false);
             // 将example_fragment.xml作为该Fragment的布局文件
             textView1 = root.findViewById(R.id.day1);
-            int p = (thatDay - GuaHaoXiangQingActivity.getDayofWeek("") + 7) % 7;
+            int p = (thatDay - HosptialUtils.getDayofWeek("") + 7) % 7;
             textView1.setText(GuaHaoXiangQingActivity.years[p] + "年" + GuaHaoXiangQingActivity.months[p] + "月" + GuaHaoXiangQingActivity.dates[p] + "日");
 
             if (docTreatTime.charAt(thatDay *2) == '1') {
