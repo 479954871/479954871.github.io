@@ -66,7 +66,6 @@ public class GuaHaoXiangQingActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gua_hao_xiang_qing_layout);
-        DownloadBMPFromUrlUtils.handleSSLHandshake();
         keshiFirst = getIntent().getStringExtra("keshi_first");
         keshiSecond = getIntent().getStringExtra("keshi_second");
         keshiFirstId = getIntent().getIntExtra("keshi_first_id", 1);

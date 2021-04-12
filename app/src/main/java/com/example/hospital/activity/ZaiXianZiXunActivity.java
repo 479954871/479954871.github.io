@@ -18,9 +18,9 @@ import android.widget.Toast;
 
 import com.example.hospital.R;
 import com.example.hospital.Utils.DownloadBMPFromUrlUtils;
+import com.example.hospital.account.AccountManager;
 import com.example.hospital.server.HospitalServer;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,31 +29,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChooseDoctorActivity extends AppCompatActivity {
+public class ZaiXianZiXunActivity extends AppCompatActivity {
+
     List<Map<String, ?>> listAllDoctor = new ArrayList<>();
-    String keshiSecond, keshiFirst;
-    int keshiFirstId, keshiSecondId;
     ListView listView;
     SimpleAdapter mListViewAdapter;
     static Bitmap bitmap = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose_doctor);
-        keshiFirst = getIntent().getStringExtra("keshi_first");
-        keshiSecond = getIntent().getStringExtra("keshi_second");
-        keshiFirstId = getIntent().getIntExtra("keshi_first_id", 1);
-        keshiSecondId = getIntent().getIntExtra("keshi_second_id", 1);
-        sendGetDoctorRequest();
+        setContentView(R.layout.activity_zai_xian_zi_xun);
         TextView textView = findViewById(R.id.main_head_title);
-        textView.setText("选择医生");
+        textView.setText("在线咨询");
         ImageView backView = findViewById(R.id.back);
         backView.setOnClickListener(v -> {
             finish();
         });
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
-
+        setList();
         listView = findViewById(R.id.listview_guahao);
         mListViewAdapter = new SimpleAdapter(this, listAllDoctor, R.layout.guahao_item,
                 new String[] {"doc_pic", "doc_name", "doc_specialist", "doc_good_at"}, new int[] {R.id.doc_pic, R.id.doc_name,
@@ -68,7 +62,7 @@ public class ChooseDoctorActivity extends AppCompatActivity {
         });
         listView.setAdapter(mListViewAdapter);
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            Intent intent = new Intent(ChooseDoctorActivity.this, WriteToDoctorActivity.class);
+            Intent intent = new Intent(ZaiXianZiXunActivity.this, WriteToDoctorActivity.class);
             intent.putExtra("doc_id", (String)listAllDoctor.get(position).get("doc_id"));
             if (listAllDoctor.get(position).get("doc_pic") instanceof Bitmap) {
                 bitmap = (Bitmap) listAllDoctor.get(position).get("doc_pic");
@@ -80,24 +74,25 @@ public class ChooseDoctorActivity extends AppCompatActivity {
             intent.putExtra("doc_intro", (String)listAllDoctor.get(position).get("doc_intro"));
             intent.putExtra("doc_good_at", (String)listAllDoctor.get(position).get("doc_good_at"));
             intent.putExtra("doc_treat_time", (String)listAllDoctor.get(position).get("doc_treat_time"));
-            intent.putExtra("keshi_first", keshiFirst);
-            intent.putExtra("keshi_second", keshiSecond);
-            intent.putExtra("keshi_first_id", keshiFirstId);
-            intent.putExtra("keshi_second_id", keshiSecondId);
-            intent.putExtra("flag", 0);
+            intent.putExtra("keshi_first", (String)listAllDoctor.get(position).get("first_dep"));
+            intent.putExtra("keshi_second", (String)listAllDoctor.get(position).get("second_dep"));
+            intent.putExtra("keshi_first_id", Integer.parseInt((String)listAllDoctor.get(position).get("first_dep_id")));
+            intent.putExtra("keshi_second_id", Integer.parseInt((String)listAllDoctor.get(position).get("second_dep_id")));
+            intent.putExtra("flag", 2);
             startActivity(intent);
         });
     }
 
-    private void sendGetDoctorRequest() {
-        listAllDoctor.clear();
-        HospitalServer.sendGetDoctorRequest(keshiFirstId, keshiSecondId, new HospitalServer.GetDoctorCallback() {
-            @Override
-            public void getSuccess(JSONObject jsonObject) {
-                try {
-                    JSONArray jsonArray = jsonObject.getJSONArray("data");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+    private void setList() {
+        Map<String, List<AccountManager.Msg>> messages = AccountManager.getInstance().messages;
+        for (String key : messages.keySet()) {
+            List<AccountManager.Msg> msgList= messages.get(key);
+            if (msgList == null || msgList.size() == 0) continue;
+            HospitalServer.sendGetDoctorFromIdRequest(msgList.get(0).docId, new HospitalServer.GetDoctorFromIdCallback() {
+                @Override
+                public void getSuccess(JSONObject jsonObject) {
+                    try {
+                        JSONObject jsonObject1 = jsonObject.getJSONObject("data");
                         Map<String, Object> map = new HashMap<>();
                         String docId = jsonObject1.getString("doc_id");
                         String docName = jsonObject1.getString("doc_name");
@@ -112,7 +107,6 @@ public class ChooseDoctorActivity extends AppCompatActivity {
                         }
                         String docTreatTime = jsonObject1.getString("doc_treat_time");
                         String docPic = jsonObject1.getString("doc_pic");
-
                         map.put("doc_id", docId);
                         map.put("doc_name", docName);
                         map.put("doc_specialist", docSpecialist);
@@ -124,27 +118,30 @@ public class ChooseDoctorActivity extends AppCompatActivity {
                         } else {
                             map.put("doc_pic", DownloadBMPFromUrlUtils.getBitmapFromUrl(docPic));
                         }
+                        map.put("first_dep", jsonObject1.getString("first_dep"));
+                        map.put("first_dep_id", jsonObject1.getString("first_dep_id"));
+                        map.put("second_dep", jsonObject1.getString("second_dep"));
+                        map.put("second_dep_id", jsonObject1.getString("second_dep_id"));
                         listAllDoctor.add(map);
                         Log.w("TAG", "getSuccess: doc_id:" + docId + " docName:" + docName);
+                    } catch (
+                            JSONException e) {
+                        e.printStackTrace();
                     }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    Message msg = new Message();
+                    msg.what = 0;
+                    handler.sendMessage(msg);
                 }
-                Message msg = new Message();
-                msg.what = 0;
-                handler.sendMessage(msg);
-            }
 
-            @Override
-            public void networkUnavailable() {
-                Message msg = new Message();
-                msg.what = 1;
-                handler.sendMessage(msg);
-            }
-        });
+                @Override
+                public void networkUnavailable() {
+                    Message msg = new Message();
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                }
+            });
+        }
     }
-
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -154,12 +151,11 @@ public class ChooseDoctorActivity extends AppCompatActivity {
                     mListViewAdapter.notifyDataSetChanged();
                     break;
                 case 1:
-                    Toast.makeText(ChooseDoctorActivity.this, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ZaiXianZiXunActivity.this, "网络不可用，请检查网络", Toast.LENGTH_SHORT).show();
                     break;
             }
         }
     };
-
     public static Bitmap getBitmap() {
         return bitmap;
     }

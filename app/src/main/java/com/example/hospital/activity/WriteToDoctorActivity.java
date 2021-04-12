@@ -54,6 +54,7 @@ public class WriteToDoctorActivity extends AppCompatActivity {
         docGoodAt = getIntent().getStringExtra("doc_good_at");
         int flag = getIntent().getIntExtra("flag", 0);
         docPic = flag == 0 ? ChooseDoctorActivity.getBitmap() : ZiXunGuanLiActivity.getBitmap();
+        if (flag == 2) docPic = ZaiXianZiXunActivity.getBitmap();
         keshiFirst = getIntent().getStringExtra("keshi_first");
         keshiSecond = getIntent().getStringExtra("keshi_second");
         keshiFirstId = getIntent().getIntExtra("keshi_first_id", 0);

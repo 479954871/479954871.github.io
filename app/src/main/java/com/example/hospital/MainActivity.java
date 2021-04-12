@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 
+import com.example.hospital.Utils.DownloadBMPFromUrlUtils;
 import com.example.hospital.account.AccountManager;
 import com.example.hospital.server.HospitalServer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        DownloadBMPFromUrlUtils.handleSSLHandshake();
         SharedPreferences sharedPreferences = this.getSharedPreferences("login", MODE_PRIVATE);
         HospitalServer.sendLoginRequest(sharedPreferences.getString("account",""), sharedPreferences.getString("password",""), new HospitalServer.LoginCallback() {
             @Override
