@@ -28,24 +28,22 @@ public class YiYuanJieShaoActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.main_head_title);
         textView.setText("医院介绍");
         WebView webView = findViewById(R.id.webview);
-        webView.loadUrl("https://www.fsyyy.com/index.aspx");//https://www.fsyyy.com/index.aspx
-        // 系统默认会通过手机浏览器打开网页，为了能够直接通过WebView显示网页，则必须设置
+        webView.loadUrl("https://www.fsyyy.com/phone/");
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                //使用WebView加载显示url
                 view.loadUrl(url);
-                //返回true
                 return true;
             }
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 handler.proceed();
                 super.onReceivedSslError(view, handler, error);
-                Log.d(TAG, "onReceivedSslError: "); //如果是证书问题，会打印出此条log到console
+                Log.d(TAG, "onReceivedSslError: " + error);
             }
         });
-        //webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setJavaScriptEnabled(true);
         ImageView backView = findViewById(R.id.back);
         backView.setOnClickListener(v -> {
             YiYuanJieShaoActivity.this.finish();

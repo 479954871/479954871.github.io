@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:textSize="25sp"
             android:id="@+id/text_my_account"
-            android:text="我的账号"
+            android:text="我的账户"
             android:textColor="@color/black"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"/>

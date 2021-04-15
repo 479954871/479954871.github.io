@@ -23,12 +23,9 @@ public class MessageFragment extends Fragment {
         messageViewModel =
                 new ViewModelProvider(this).get(MessageViewModel.class);
         View root = inflater.inflate(R.layout.fragment_message, container, false);
-        final TextView textView = root.findViewById(R.id.text_dashboard);
         messageViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
+            public void onChanged(@Nullable String s) { }
         });
         TextView textView1 = root.findViewById(R.id.main_head_title);
         textView1.setText("消息");

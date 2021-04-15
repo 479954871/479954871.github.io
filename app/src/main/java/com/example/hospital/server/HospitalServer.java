@@ -2,6 +2,7 @@ package com.example.hospital.server;
 
 import android.util.Log;
 
+import com.example.hospital.Utils.SecurityUtils;
 import com.example.hospital.account.AccountManager;
 import com.example.hospital.constant.HosptialConstant;
 
@@ -48,6 +49,13 @@ public class HospitalServer {
                     connection.setConnectTimeout(8000);
                     connection.setReadTimeout(8000);
                     DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                    try{
+                        String temp = SecurityUtils.encrypt(password);
+                        Log.w(TAG, "check RSA加密后: " + temp);
+                        Log.w(TAG, "check RSA解密后: " + SecurityUtils.decrypt(temp));
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
                     out.writeBytes("phone="+phone+"&password="+password);
                     InputStream in = connection.getInputStream();
                     reader = new BufferedReader(new InputStreamReader(in));
@@ -439,49 +447,50 @@ public class HospitalServer {
     /**
      * 发送医生信息请求
      */
-    public static void sendGetDoctorRequest(int firstDep, int secondDep, GetDoctorCallback callback) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpURLConnection connection = null;
-                BufferedReader reader = null;
-                try {
-                    URL url = new URL(HosptialConstant.WEBSITE + HosptialConstant.WEBSITE_GET_DOCTOR);
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("POST");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
-                    DataOutputStream out = new DataOutputStream(connection.getOutputStream());
-                    out.writeBytes("firstdepid="+firstDep+"&seconddepid="+secondDep);
-                    InputStream in = connection.getInputStream();
-                    reader = new BufferedReader(new InputStreamReader(in));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
+    public static void sendGetDoctorRequest(int firstDepId, int secondDepId, GetDoctorCallback callback) {
+        new Thread(() -> {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+                URL url = new URL(HosptialConstant.WEBSITE + HosptialConstant.WEBSITE_GET_DOCTOR);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setConnectTimeout(8000);
+                connection.setReadTimeout(8000);
+                DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+                out.writeBytes("firstdepid="+firstDepId+"&seconddepid="+secondDepId);
+                InputStream in = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                Log.d(TAG, response.toString());
+                JSONObject jsonObject = new JSONObject(response.toString());
+                String status = jsonObject.getString("status");
+                if (status.equals("医生信息返回成功") ){
+                    callback.getSuccess(jsonObject);
+                }
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "url form wrong");
+                callback.networkUnavailable();
+            } catch (IOException e) {
+                Log.e(TAG, "IOException :" + e.getMessage());
+                callback.networkUnavailable();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
                     }
-                    Log.d(TAG, response.toString());
-                    JSONObject jsonObject = new JSONObject(response.toString());
-                    String status = jsonObject.getString("status");
-                    if (status.equals("医生信息返回成功") ){
-                        callback.getSuccess(jsonObject);
+                    catch (IOException e) {
+                        // ignore
                     }
-                } catch (MalformedURLException e) {
-                    Log.e(TAG, "url form wrong");
-                    callback.networkUnavailable();
-                } catch (IOException e) {
-                    Log.e(TAG, "IOException 1:" + e.getMessage());
-                    callback.networkUnavailable();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (reader != null) {
-                        try { reader.close(); }
-                        catch (IOException e) { Log.e(TAG, "IOException 2:" +e.getMessage()); }
-                    }
-                    if (connection != null) {
-                        connection.disconnect();
-                    }
+                }
+                if (connection != null) {
+                    connection.disconnect();
                 }
             }
         }).start();
@@ -848,7 +857,7 @@ public class HospitalServer {
     }
 
     /**
-     * 发送线上问诊请求
+     * 发送通过ID查找医生信息请求
      */
     public static void sendGetDoctorFromIdRequest(String docId, GetDoctorFromIdCallback callback) {
         new Thread(new Runnable() {
@@ -863,7 +872,7 @@ public class HospitalServer {
                     connection.setConnectTimeout(8000);
                     connection.setReadTimeout(8000);
                     DataOutputStream out = new DataOutputStream(connection.getOutputStream());
-                    out.writeBytes("docid="+docId);
+                    out.writeBytes("docid="+docId); // 请求参数
                     InputStream in = connection.getInputStream();
                     reader = new BufferedReader(new InputStreamReader(in));
                     StringBuilder response = new StringBuilder();
@@ -872,7 +881,7 @@ public class HospitalServer {
                         response.append(line);
                     }
                     Log.d(TAG, response.toString());
-                    JSONObject jsonObject = new JSONObject(response.toString());
+                    JSONObject jsonObject = new JSONObject(response.toString()); //返回的JSON格式数据
                     String status = jsonObject.getString("status");
                     if (status.equals("医生信息返回成功") ){
                         callback.getSuccess(jsonObject);
